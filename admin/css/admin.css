@@ -1,0 +1,118 @@
+/**
+ * Admin Styles for Rejaton Product Catalog
+ */
+
+.rj-admin-wrap {
+	max-width: 1200px;
+}
+
+.rj-settings-card {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 6px;
+	padding: 20px 24px;
+	margin-bottom: 24px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.rj-settings-card h2 {
+	margin-top: 0;
+	border-bottom: 1px solid #eee;
+	padding-bottom: 12px;
+	font-size: 1.25rem;
+	color: #1d2327;
+}
+
+.rj-meta-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 8px 0;
+}
+
+.rj-meta-row {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex-wrap: wrap;
+}
+
+.rj-meta-row label {
+	width: 220px;
+	font-weight: 600;
+	color: #2c3338;
+}
+
+.rj-meta-row .description {
+	color: #646970;
+	font-style: italic;
+	font-size: 13px;
+}
+
+/* Gallery Grid */
+.rj-gallery-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-bottom: 14px;
+}
+
+.rj-gallery-item {
+	position: relative;
+	width: 90px;
+	height: 90px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	overflow: hidden;
+	background: #f6f7f7;
+}
+
+.rj-gallery-item img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.rj-gallery-remove {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	background: rgba(220, 50, 50, 0.85);
+	color: #fff;
+	border: none;
+	border-radius: 50%;
+	width: 20px;
+	height: 20px;
+	line-height: 18px;
+	text-align: center;
+	cursor: pointer;
+	font-size: 14px;
+	padding: 0;
+}
+
+.rj-gallery-remove:hover {
+	background: #d63638;
+}
+
+/* Token insert buttons */
+.rj-token-insert-btn {
+	transition: all 0.2s ease;
+}
+
+.rj-token-insert-btn:hover {
+	background: #f0f6fc !important;
+	border-color: #2271b1 !important;
+	color: #2271b1 !important;
+}
+
+/* Template Preview */
+.rj-preview-content {
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+.rj-preview-content h3 {
+	margin-top: 16px;
+	margin-bottom: 8px;
+	color: #0c3260;
+}

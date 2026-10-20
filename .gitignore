@@ -1,0 +1,6 @@
+# Git ignore for Rejaton Product Catalog
+*.log
+.DS_Store
+Thumbs.db
+node_modules/
+vendor/

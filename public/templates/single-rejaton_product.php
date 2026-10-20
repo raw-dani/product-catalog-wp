@@ -1,0 +1,182 @@
+<?php
+/**
+ * Single Product Detail Template for Rejaton Product Catalog
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+get_header();
+
+$product_id = get_the_ID();
+$tipe_pompa = Rejaton_Catalog_Product_Meta::get_meta( $product_id, 'tipe_pompa', '' );
+$debit      = Rejaton_Catalog_Product_Meta::get_meta( $product_id, 'debit', '' );
+$head_min   = Rejaton_Catalog_Product_Meta::get_meta( $product_id, 'head_min', '' );
+$head_max   = Rejaton_Catalog_Product_Meta::get_meta( $product_id, 'head_max', '' );
+$daya_panel = Rejaton_Catalog_Product_Meta::get_meta( $product_id, 'daya_panel_surya', '' );
+$head_range = rejaton_format_head_range( $head_min, $head_max, 'meter' );
+
+$gallery_ids = Rejaton_Catalog_Product_Meta::get_gallery_ids( $product_id );
+$main_thumb  = get_post_thumbnail_id( $product_id );
+if ( $main_thumb && ! in_array( $main_thumb, $gallery_ids ) ) {
+	array_unshift( $gallery_ids, $main_thumb );
+}
+
+$cta_label = rejaton_get_option( 'cta_text', 'Konsultasikan via WhatsApp' );
+$wa_url    = rejaton_get_whatsapp_url( $product_id );
+
+// Rendered description from dynamic template
+$rendered_desc = Rejaton_Catalog_Template_Renderer::render( $product_id );
+
+// Get spec table fields configured in settings
+$spec_keys = rejaton_get_option( 'spec_table_fields', array( 'tipe_pompa', 'debit', 'rentang_head', 'daya_panel_surya', 'debit_m3_jam' ) );
+$resolved_values = Rejaton_Catalog_Product_Meta::get_resolved_values( $product_id );
+$all_fields      = Rejaton_Catalog_Field_Registry::get_all_fields();
+?>
+
+<div class="rj-detail-wrapper">
+	<!-- Breadcrumbs -->
+	<nav class="rj-breadcrumbs" aria-label="Breadcrumb">
+		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Beranda', 'rejaton-product-catalog' ); ?></a>
+		<span class="rj-sep">&rsaquo;</span>
+		<a href="<?php echo esc_url( get_post_type_archive_link( 'rejaton_product' ) ); ?>"><?php esc_html_e( 'Katalog Produk', 'rejaton-product-catalog' ); ?></a>
+		<span class="rj-sep">&rsaquo;</span>
+		<span class="rj-current"><?php the_title(); ?></span>
+	</nav>
+
+	<div class="rj-detail-main">
+		<!-- Left: Media & Gallery -->
+		<div class="rj-detail-gallery-col">
+			<div class="rj-gallery-main-view">
+				<?php if ( ! empty( $gallery_ids ) ) :
+					$first_img = wp_get_attachment_image_url( $gallery_ids[0], 'large' );
+					?>
+					<img id="rj-main-photo" src="<?php echo esc_url( $first_img ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" />
+				<?php else : ?>
+					<div class="rj-no-thumb-detail">
+						<span class="dashicons dashicons-camera" style="font-size:48px; width:48px; height:48px;"></span>
+						<p><?php esc_html_e( 'Foto Produk Rejaton', 'rejaton-product-catalog' ); ?></p>
+					</div>
+				<?php endif; ?>
+			</div>
+
+			<?php if ( count( $gallery_ids ) > 1 ) : ?>
+				<div class="rj-gallery-thumbs">
+					<?php foreach ( $gallery_ids as $idx => $gid ) :
+						$thumb_src = wp_get_attachment_image_url( $gid, 'thumbnail' );
+						$large_src = wp_get_attachment_image_url( $gid, 'large' );
+						if ( $thumb_src ) : ?>
+							<button type="button" class="rj-thumb-item<?php if ( 0 === $idx ) echo ' active'; ?>" data-large="<?php echo esc_url( $large_src ); ?>">
+								<img src="<?php echo esc_url( $thumb_src ); ?>" alt="" />
+							</button>
+						<?php endif;
+					endforeach; ?>
+				</div>
+			<?php endif; ?>
+		</div>
+
+		<!-- Right: Product Overview & CTA -->
+		<div class="rj-detail-info-col">
+			<h1 class="rj-product-title"><?php the_title(); ?></h1>
+
+			<?php if ( has_excerpt() ) : ?>
+				<div class="rj-product-summary">
+					<?php the_excerpt(); ?>
+				</div>
+			<?php endif; ?>
+
+			<!-- Quick Spec Highlights Card -->
+			<div class="rj-highlight-specs">
+				<?php if ( ! empty( $tipe_pompa ) ) : ?>
+					<div class="rj-highlight-item">
+						<div class="rj-hl-label"><?php esc_html_e( 'Tipe Pompa', 'rejaton-product-catalog' ); ?></div>
+						<div class="rj-hl-val"><?php echo esc_html( $tipe_pompa ); ?></div>
+					</div>
+				<?php endif; ?>
+
+				<?php if ( '' !== $debit && null !== $debit ) : ?>
+					<div class="rj-highlight-item">
+						<div class="rj-hl-label"><?php esc_html_e( 'Kapasitas Debit', 'rejaton-product-catalog' ); ?></div>
+						<div class="rj-hl-val"><?php echo esc_html( rejaton_format_number_locale( $debit ) ); ?> <small>liter/detik</small></div>
+					</div>
+				<?php endif; ?>
+
+				<?php if ( ! empty( $head_range ) ) : ?>
+					<div class="rj-highlight-item">
+						<div class="rj-hl-label"><?php esc_html_e( 'Kemampuan Head', 'rejaton-product-catalog' ); ?></div>
+						<div class="rj-hl-val"><?php echo esc_html( $head_range ); ?></div>
+					</div>
+				<?php endif; ?>
+
+				<?php if ( '' !== $daya_panel && null !== $daya_panel ) : ?>
+					<div class="rj-highlight-item">
+						<div class="rj-hl-label"><?php esc_html_e( 'Rekomendasi Panel', 'rejaton-product-catalog' ); ?></div>
+						<div class="rj-hl-val"><?php echo esc_html( rejaton_format_number_locale( $daya_panel ) ); ?> <small>kWp</small></div>
+					</div>
+				<?php endif; ?>
+			</div>
+
+			<!-- Consultation WhatsApp CTA Button -->
+			<?php if ( ! empty( $wa_url ) ) : ?>
+				<div class="rj-cta-action-area">
+					<a href="<?php echo esc_url( $wa_url ); ?>" class="rj-btn rj-btn-whatsapp rj-btn-lg" target="_blank" rel="noopener noreferrer">
+						<span class="dashicons dashicons-format-chat" style="vertical-align:text-bottom;"></span>
+						<?php echo esc_html( $cta_label ); ?>
+					</a>
+					<p class="rj-cta-note"><?php esc_html_e( 'Dapatkan konsultasi teknis gratis mengenai penentuan tipe pompa, debit sumur, dan kebutuhan panel surya dari tim ahli Rejaton.', 'rejaton-product-catalog' ); ?></p>
+				</div>
+			<?php endif; ?>
+		</div>
+	</div>
+
+	<!-- Bottom Section: Dynamic Rendered Description & Spec Table -->
+	<div class="rj-detail-tabs-section">
+		<div class="rj-section-block">
+			<h2 class="rj-section-title"><?php esc_html_e( 'Deskripsi & Ulasan Sistem', 'rejaton-product-catalog' ); ?></h2>
+			<div class="rj-rendered-description">
+				<?php echo $rendered_desc; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
+		</div>
+
+		<!-- Technical Spec Table -->
+		<div class="rj-section-block">
+			<h2 class="rj-section-title"><?php esc_html_e( 'Tabel Spesifikasi Teknis', 'rejaton-product-catalog' ); ?></h2>
+			<table class="rj-spec-table">
+				<tbody>
+					<?php
+					$has_any_spec = false;
+					foreach ( $spec_keys as $skey ) :
+						if ( ! isset( $all_fields[ $skey ] ) ) {
+							continue;
+						}
+						$finfo = $all_fields[ $skey ];
+						$val   = isset( $resolved_values[ $skey ] ) ? $resolved_values[ $skey ] : '';
+
+						if ( '' !== $val && null !== $val ) :
+							$has_any_spec = true;
+							$display = is_numeric( $val ) ? rejaton_format_number_locale( $val ) : esc_html( (string) $val );
+							if ( ! empty( $finfo['unit'] ) && false === strpos( $display, $finfo['unit'] ) ) {
+								$display .= ' ' . esc_html( $finfo['unit'] );
+							}
+							?>
+							<tr>
+								<th><?php echo esc_html( $finfo['label'] ); ?></th>
+								<td><?php echo esc_html( $display ); ?></td>
+							</tr>
+						<?php endif;
+					endforeach;
+
+					if ( ! $has_any_spec ) : ?>
+						<tr>
+							<td colspan="2"><?php esc_html_e( 'Spesifikasi teknis lengkap dapat dikonsultasikan langsung ke tim teknis Rejaton.', 'rejaton-product-catalog' ); ?></td>
+						</tr>
+					<?php endif; ?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<?php
+get_footer();
