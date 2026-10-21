@@ -11,7 +11,20 @@ class Rejaton_Catalog_Public {
 
 	public function init() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ) );
+		add_filter( 'script_loader_tag', array( $this, 'add_defer_attribute' ), 10, 2 );
 		add_filter( 'template_include', array( $this, 'load_custom_templates' ) );
+	}
+
+	/**
+	 * Defer frontend script to eliminate render-blocking resources for PageSpeed Insights
+	 */
+	public function add_defer_attribute( $tag, $handle ) {
+		if ( 'rejaton-catalog-frontend' === $handle ) {
+			if ( false === strpos( $tag, 'defer' ) ) {
+				$tag = str_replace( ' src', ' defer src', $tag );
+			}
+		}
+		return $tag;
 	}
 
 	public function register_assets() {

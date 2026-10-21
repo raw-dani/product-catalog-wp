@@ -21,11 +21,11 @@ class Rejaton_Catalog_Cache {
 
 	public function flush_product_cache( $product_id ) {
 		wp_cache_delete( 'product_render_' . $product_id, self::CACHE_GROUP );
-		self::purge_litespeed_tag( 'rejaton_product_' . $product_id );
+		self::purge_litespeed_post( $product_id );
 	}
 
 	public function flush_template_cache( $template_id ) {
-		// When template is saved, flush all rendered descriptions
+		// When a global template changes, flush all rendered descriptions and catalog pages
 		self::flush_all_cache();
 	}
 
@@ -35,8 +35,18 @@ class Rejaton_Catalog_Cache {
 	}
 
 	/**
-	 * LiteSpeed Cache integration (if active)
+	 * LiteSpeed Cache integration
 	 */
+	public static function purge_litespeed_post( $post_id ) {
+		if ( defined( 'LSCWP_V' ) || has_action( 'litespeed_purge_post' ) ) {
+			do_action( 'litespeed_purge_post', $post_id );
+		}
+		// Also purge archive tag
+		if ( has_action( 'litespeed_purge' ) ) {
+			do_action( 'litespeed_purge', 'rejaton_catalog_archive' );
+		}
+	}
+
 	public static function purge_litespeed_tag( $tag ) {
 		if ( defined( 'LSCWP_V' ) || has_action( 'litespeed_purge' ) ) {
 			do_action( 'litespeed_purge', $tag );

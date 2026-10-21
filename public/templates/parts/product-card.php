@@ -16,7 +16,6 @@ $daya_panel = Rejaton_Catalog_Product_Meta::get_meta( $product_id, 'daya_panel_s
 $featured   = Rejaton_Catalog_Product_Meta::get_meta( $product_id, 'featured', '0' );
 
 $head_range = rejaton_format_head_range( $head_min, $head_max, 'm' );
-$thumb_url  = get_the_post_thumbnail_url( $product_id, 'medium_large' );
 $cats       = get_the_terms( $product_id, 'rejaton_product_cat' );
 ?>
 
@@ -27,14 +26,27 @@ $cats       = get_the_terms( $product_id, 'rejaton_product_cat' );
 		<?php endif; ?>
 
 		<a href="<?php the_permalink(); ?>" class="rj-card-img-link">
-			<?php if ( $thumb_url ) : ?>
-				<img src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" loading="lazy" />
-			<?php else : ?>
+			<?php
+			$thumb_id = get_post_thumbnail_id( $product_id );
+			if ( $thumb_id ) {
+				echo wp_get_attachment_image(
+					$thumb_id,
+					'medium_large',
+					false,
+					array(
+						'class'    => 'rj-product-thumbnail-img',
+						'alt'      => esc_attr( get_the_title() ),
+						'loading'  => 'lazy',
+						'decoding' => 'async',
+					)
+				);
+			} else {
+				?>
 				<div class="rj-no-thumb">
 					<span class="dashicons dashicons-camera"></span>
 					<span><?php esc_html_e( 'Foto Pompa Rejaton', 'rejaton-product-catalog' ); ?></span>
 				</div>
-			<?php endif; ?>
+			<?php } ?>
 		</a>
 	</div>
 

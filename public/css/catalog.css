@@ -234,9 +234,15 @@
 .rj-card-media {
 	position: relative;
 	width: 100%;
-	padding-top: 68%; /* 4:3-ish aspect */
-	background: #f1f5f9;
+	aspect-ratio: 1 / 1;
+	background: #f8fafc;
 	overflow: hidden;
+}
+
+@supports not (aspect-ratio: 1 / 1) {
+	.rj-card-media {
+		padding-top: 100%; /* 1:1 fallback for older browsers */
+	}
 }
 
 .rj-card-img-link {
@@ -248,17 +254,18 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	padding: 12px;
 }
 
 .rj-card-img-link img {
 	width: 100%;
 	height: 100%;
-	object-fit: cover;
+	object-fit: contain;
 	transition: transform 0.3s ease;
 }
 
 .rj-product-card:hover .rj-card-img-link img {
-	transform: scale(1.04);
+	transform: scale(1.05);
 }
 
 .rj-no-thumb {
@@ -518,16 +525,19 @@
 	border: 1px solid var(--rj-border);
 	border-radius: var(--rj-card-radius);
 	overflow: hidden;
-	height: 440px;
+	width: 100%;
+	aspect-ratio: 1 / 1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	margin-bottom: 12px;
+	padding: 16px;
+	box-sizing: border-box;
 }
 
 .rj-gallery-main-view img {
-	max-width: 100%;
-	max-height: 100%;
+	width: 100%;
+	height: 100%;
 	object-fit: contain;
 }
 
@@ -700,10 +710,6 @@
 	.rj-detail-gallery-col,
 	.rj-detail-info-col {
 		width: 100%;
-	}
-
-	.rj-gallery-main-view {
-		height: 360px;
 	}
 }
 

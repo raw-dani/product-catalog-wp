@@ -36,13 +36,22 @@ $all_fields      = Rejaton_Catalog_Field_Registry::get_all_fields();
 ?>
 
 <div class="rj-detail-wrapper">
-	<!-- Breadcrumbs -->
-	<nav class="rj-breadcrumbs" aria-label="Breadcrumb">
-		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Beranda', 'rejaton-product-catalog' ); ?></a>
+	<!-- Breadcrumbs with Schema.org Microdata -->
+	<nav class="rj-breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+		<span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" itemprop="item"><span itemprop="name"><?php esc_html_e( 'Beranda', 'rejaton-product-catalog' ); ?></span></a>
+			<meta itemprop="position" content="1" />
+		</span>
 		<span class="rj-sep">&rsaquo;</span>
-		<a href="<?php echo esc_url( get_post_type_archive_link( 'rejaton_product' ) ); ?>"><?php esc_html_e( 'Katalog Produk', 'rejaton-product-catalog' ); ?></a>
+		<span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+			<a href="<?php echo esc_url( get_post_type_archive_link( 'rejaton_product' ) ); ?>" itemprop="item"><span itemprop="name"><?php esc_html_e( 'Katalog Produk', 'rejaton-product-catalog' ); ?></span></a>
+			<meta itemprop="position" content="2" />
+		</span>
 		<span class="rj-sep">&rsaquo;</span>
-		<span class="rj-current"><?php the_title(); ?></span>
+		<span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+			<span class="rj-current" itemprop="name"><?php the_title(); ?></span>
+			<meta itemprop="position" content="3" />
+		</span>
 	</nav>
 
 	<div class="rj-detail-main">
@@ -50,10 +59,19 @@ $all_fields      = Rejaton_Catalog_Field_Registry::get_all_fields();
 		<div class="rj-detail-gallery-col">
 			<div class="rj-gallery-main-view">
 				<?php if ( ! empty( $gallery_ids ) ) :
-					$first_img = wp_get_attachment_image_url( $gallery_ids[0], 'large' );
-					?>
-					<img id="rj-main-photo" src="<?php echo esc_url( $first_img ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" />
-				<?php else : ?>
+					$main_img_id = $gallery_ids[0];
+					echo wp_get_attachment_image(
+						$main_img_id,
+						'large',
+						false,
+						array(
+							'id'            => 'rj-main-photo',
+							'alt'           => esc_attr( get_the_title() ),
+							'decoding'      => 'async',
+							'fetchpriority' => 'high',
+						)
+					);
+				else : ?>
 					<div class="rj-no-thumb-detail">
 						<span class="dashicons dashicons-camera" style="font-size:48px; width:48px; height:48px;"></span>
 						<p><?php esc_html_e( 'Foto Produk Rejaton', 'rejaton-product-catalog' ); ?></p>
@@ -64,14 +82,23 @@ $all_fields      = Rejaton_Catalog_Field_Registry::get_all_fields();
 			<?php if ( count( $gallery_ids ) > 1 ) : ?>
 				<div class="rj-gallery-thumbs">
 					<?php foreach ( $gallery_ids as $idx => $gid ) :
-						$thumb_src = wp_get_attachment_image_url( $gid, 'thumbnail' );
 						$large_src = wp_get_attachment_image_url( $gid, 'large' );
-						if ( $thumb_src ) : ?>
-							<button type="button" class="rj-thumb-item<?php if ( 0 === $idx ) echo ' active'; ?>" data-large="<?php echo esc_url( $large_src ); ?>">
-								<img src="<?php echo esc_url( $thumb_src ); ?>" alt="" />
-							</button>
-						<?php endif;
-					endforeach; ?>
+						?>
+						<button type="button" class="rj-thumb-item<?php if ( 0 === $idx ) echo ' active'; ?>" data-large="<?php echo esc_url( $large_src ); ?>" aria-label="<?php printf( esc_attr__( 'Foto produk %d', 'rejaton-product-catalog' ), $idx + 1 ); ?>">
+							<?php
+							echo wp_get_attachment_image(
+								$gid,
+								'thumbnail',
+								false,
+								array(
+									'alt'      => esc_attr( get_the_title() . ' thumbnail ' . ( $idx + 1 ) ),
+									'loading'  => 'lazy',
+									'decoding' => 'async',
+								)
+							);
+							?>
+						</button>
+					<?php endforeach; ?>
 				</div>
 			<?php endif; ?>
 		</div>
