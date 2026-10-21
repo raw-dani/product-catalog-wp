@@ -25,14 +25,6 @@ class Rejaton_Catalog_Admin {
 			array( $this, 'render_custom_fields_page' )
 		);
 
-		// Submenu: Template Deskripsi
-		add_submenu_page(
-			'edit.php?post_type=rejaton_product',
-			__( 'Template Deskripsi', 'rejaton-product-catalog' ),
-			__( 'Template Deskripsi', 'rejaton-product-catalog' ),
-			'manage_options',
-			'edit.php?post_type=rejaton_product_template'
-		);
 
 		// Submenu: Pengaturan Katalog
 		add_submenu_page(

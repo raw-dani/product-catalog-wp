@@ -89,7 +89,7 @@ class Rejaton_Catalog_Post_Types {
 			'public'              => false,
 			'publicly_queryable'  => false,
 			'show_ui'             => true,
-			'show_in_menu'        => false, // We'll add submenu under Rejaton Catalog
+			'show_in_menu'        => 'edit.php?post_type=rejaton_product',
 			'query_var'           => false,
 			'rewrite'             => false,
 			'capability_type'     => 'post',
