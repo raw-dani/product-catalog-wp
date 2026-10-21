@@ -22,8 +22,7 @@
 	max-width: 1240px;
 	margin: 0 auto;
 	padding: 24px 16px;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-	color: var(--rj-text);
+	color: inherit;
 	box-sizing: border-box;
 }
 
@@ -383,13 +382,15 @@
 }
 
 .rj-btn-primary {
-	background: var(--rj-primary);
-	color: #fff;
+	background: #FFC916;
+	color: #1a1a1a;
+	border-color: #e5b30d;
 }
 
 .rj-btn-primary:hover {
-	background: var(--rj-primary-dark);
-	color: #fff;
+	background: #e6b30c;
+	color: #000;
+	border-color: #cca009;
 }
 
 .rj-btn-secondary {
@@ -403,24 +404,28 @@
 }
 
 .rj-btn-outline {
-	background: transparent;
-	border-color: var(--rj-primary);
-	color: var(--rj-primary);
+	background: #FFC916;
+	border-color: #e5b30d;
+	color: #1a1a1a;
 }
 
 .rj-btn-outline:hover {
-	background: var(--rj-primary);
-	color: #fff;
+	background: #e6b30c;
+	color: #000;
+	border-color: #cca009;
 }
 
 .rj-btn-link {
 	background: transparent;
 	color: #64748b;
+	border: 1px solid transparent;
 }
 
 .rj-btn-link:hover {
-	color: #0f172a;
-	text-decoration: underline;
+	background: rgba(255, 201, 22, 0.15);
+	color: #8f6e00;
+	border-color: rgba(255, 201, 22, 0.4);
+	text-decoration: none;
 }
 
 .rj-btn-whatsapp {
@@ -631,15 +636,15 @@
 }
 
 .rj-rendered-description {
-	font-size: 1.02rem;
-	line-height: 1.7;
-	color: #334155;
+	font-size: inherit;
+	line-height: inherit;
+	color: inherit;
 }
 
 .rj-rendered-description h3 {
-	font-size: 1.25rem;
+	font-size: 1.25em;
 	font-weight: 700;
-	color: #0f172a;
+	color: inherit;
 	margin-top: 24px;
 	margin-bottom: 12px;
 }

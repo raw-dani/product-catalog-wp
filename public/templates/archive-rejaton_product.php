@@ -78,35 +78,6 @@ $grid_class = 'rj-product-grid rj-cols-' . esc_attr( isset( $desktop_cols ) ? $d
 							</div>
 						<?php endif; ?>
 
-						<!-- Debit Range (liters/sec) -->
-						<div class="rj-filter-group">
-							<div class="rj-filter-label"><?php esc_html_e( 'Debit Air (liter/detik)', 'rejaton-product-catalog' ); ?></div>
-							<div class="rj-range-inputs">
-								<input type="number" step="any" min="0" name="debit_min" value="<?php echo esc_attr( isset( $params['debit_min'] ) ? $params['debit_min'] : '' ); ?>" placeholder="Min" />
-								<span>s/d</span>
-								<input type="number" step="any" min="0" name="debit_max" value="<?php echo esc_attr( isset( $params['debit_max'] ) ? $params['debit_max'] : '' ); ?>" placeholder="Max" />
-							</div>
-						</div>
-
-						<!-- Head Range (meters) -->
-						<div class="rj-filter-group">
-							<div class="rj-filter-label"><?php esc_html_e( 'Kebutuhan Head (meter)', 'rejaton-product-catalog' ); ?></div>
-							<div class="rj-range-inputs">
-								<input type="number" step="any" min="0" name="head_min" value="<?php echo esc_attr( isset( $params['head_min'] ) ? $params['head_min'] : '' ); ?>" placeholder="Min" />
-								<span>s/d</span>
-								<input type="number" step="any" min="0" name="head_max" value="<?php echo esc_attr( isset( $params['head_max'] ) ? $params['head_max'] : '' ); ?>" placeholder="Max" />
-							</div>
-						</div>
-
-						<!-- Solar Power (kWp) -->
-						<div class="rj-filter-group">
-							<div class="rj-filter-label"><?php esc_html_e( 'Daya Panel Surya (kWp)', 'rejaton-product-catalog' ); ?></div>
-							<div class="rj-range-inputs">
-								<input type="number" step="any" min="0" name="daya_min" value="<?php echo esc_attr( isset( $params['daya_min'] ) ? $params['daya_min'] : '' ); ?>" placeholder="Min" />
-								<span>s/d</span>
-								<input type="number" step="any" min="0" name="daya_max" value="<?php echo esc_attr( isset( $params['daya_max'] ) ? $params['daya_max'] : '' ); ?>" placeholder="Max" />
-							</div>
-						</div>
 
 						<div class="rj-filter-actions">
 							<button type="submit" class="rj-btn rj-btn-primary rj-btn-block"><?php esc_html_e( 'Terapkan Filter', 'rejaton-product-catalog' ); ?></button>
