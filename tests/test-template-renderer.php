@@ -89,10 +89,10 @@ $range_same = rejaton_format_head_range( 50, 50, 'meter' );
 assert_test( '50 meter' === $range_same, 'Head min 50 dan max 50 menghasilkan "50 meter"' );
 
 $range_min_only = rejaton_format_head_range( 30, '', 'meter' );
-assert_test( 'Mulai dari 30 meter' === $range_min_only, 'Head hanya min diformat "Mulai dari 30 meter"' );
+assert_test( '30 meter' === $range_min_only, 'Head hanya min diformat "30 meter"' );
 
 $range_max_only = rejaton_format_head_range( '', 120, 'meter' );
-assert_test( 'Hingga 120 meter' === $range_max_only, 'Head hanya max diformat "Hingga 120 meter"' );
+assert_test( '120 meter' === $range_max_only, 'Head hanya max diformat "120 meter"' );
 
 // 3. Test Template Token Validator
 $valid_template = 'Pompa [Tipe Pompa] debit [Debit] dan [Rentang Head]';

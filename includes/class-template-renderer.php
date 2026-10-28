@@ -50,6 +50,18 @@ class Rejaton_Catalog_Template_Renderer {
 		$empty_policy = rejaton_get_option( 'empty_token_policy', 'blank' ); // 'blank' or 'dash'
 		$token_map    = Rejaton_Catalog_Field_Registry::get_token_map();
 
+		// 0. Auto-clean legacy debit text patterns from older templates (e.g., "[Debit] liter/detik atau [Debit × 3,6] m³/jam")
+		$content = preg_replace(
+			'/\[Debit\]\s*(?:liter\/detik|l\/detik|lps)\s*(?:atau|\/)\s*\[Debit\s*(?:×|\*|x)\s*3\,?6\]\s*m[³3]\/jam/iu',
+			'[Debit] m³/jam',
+			$content
+		);
+		$content = preg_replace(
+			'/\[Debit\]\s*(?:liter\/detik|l\/detik|lps)/iu',
+			'[Debit] m³/jam',
+			$content
+		);
+
 		// 1. Process conditional blocks: [IF:field_key]...[/IF]
 		$content = preg_replace_callback( '/\[IF:([a-z0-9_]+)\]([\s\S]*?)\[\/IF\]/i', function( $matches ) use ( $values ) {
 			$field_key = $matches[1];

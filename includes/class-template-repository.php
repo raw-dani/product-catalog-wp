@@ -171,4 +171,63 @@ HTML;
 
 		return (int) get_option( self::DEFAULT_TEMPLATE_OPTION, 0 );
 	}
+
+	/**
+	 * Migrate all existing templates in database to clean legacy debit string
+	 */
+	public static function migrate_legacy_templates() {
+		// Only run if not already migrated or once per day/option
+		$migrated_ver = get_option( 'rejaton_templates_debit_migrated', '' );
+		if ( '1.0.2' === $migrated_ver ) {
+			return;
+		}
+
+		$templates = get_posts( array(
+			'post_type'      => array( 'rejaton_template', 'rejaton_product_template' ),
+			'posts_per_page' => -1,
+			'post_status'    => 'any',
+		) );
+
+		foreach ( $templates as $t ) {
+			$needs_update = false;
+			$new_content  = $t->post_content;
+
+			if ( false !== strpos( $new_content, 'liter/detik' ) || false !== strpos( $new_content, '3,6' ) ) {
+				$new_content = preg_replace(
+					'/\[Debit\]\s*(?:liter\/detik|l\/detik|lps)\s*(?:atau|\/)\s*\[Debit\s*(?:×|\*|x)\s*3\,?6\]\s*m[³3]\/jam/iu',
+					'[Debit] m³/jam',
+					$new_content
+				);
+				$new_content = preg_replace(
+					'/\[Debit\]\s*(?:liter\/detik|l\/detik|lps)/iu',
+					'[Debit] m³/jam',
+					$new_content
+				);
+				if ( $new_content !== $t->post_content ) {
+					$needs_update = true;
+				}
+			}
+
+			$post_type = ( 'rejaton_product_template' === $t->post_type ) ? 'rejaton_template' : $t->post_type;
+			if ( $post_type !== $t->post_type ) {
+				$needs_update = true;
+			}
+
+			if ( $needs_update ) {
+				wp_update_post( array(
+					'ID'           => $t->ID,
+					'post_content' => $new_content,
+					'post_type'    => $post_type,
+				) );
+			}
+		}
+
+		update_option( 'rejaton_templates_debit_migrated', '1.0.2' );
+
+		// Flush all caches so frontends see updated content immediately
+		if ( class_exists( 'Rejaton_Catalog_Cache' ) ) {
+			$cache = new Rejaton_Catalog_Cache();
+			$cache->flush_all_cache();
+		}
+	}
 }
