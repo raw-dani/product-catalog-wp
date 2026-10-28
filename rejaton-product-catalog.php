@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'REJATON_CATALOG_VERSION', '1.0.1' );
+define( 'REJATON_CATALOG_VERSION', '1.0.2' );
 define( 'REJATON_CATALOG_FILE', __FILE__ );
 define( 'REJATON_CATALOG_PATH', plugin_dir_path( __FILE__ ) );
 define( 'REJATON_CATALOG_URL', plugin_dir_url( __FILE__ ) );

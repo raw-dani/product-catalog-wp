@@ -57,15 +57,17 @@ $cats       = get_the_terms( $product_id, 'rejaton_product_cat' );
 			</div>
 		<?php endif; ?>
 
-		<h3 class="rj-card-title">
-			<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-		</h3>
+		<div class="rj-card-header-info">
+			<h3 class="rj-card-title">
+				<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+			</h3>
 
-		<?php if ( has_excerpt() ) : ?>
-			<div class="rj-card-excerpt">
-				<?php echo esc_html( wp_trim_words( get_the_excerpt(), 14 ) ); ?>
-			</div>
-		<?php endif; ?>
+			<?php if ( has_excerpt() ) : ?>
+				<div class="rj-card-excerpt">
+					<?php echo esc_html( wp_trim_words( get_the_excerpt(), 14 ) ); ?>
+				</div>
+			<?php endif; ?>
+		</div>
 
 		<!-- Technical specs quick chips -->
 		<div class="rj-card-specs">
