@@ -89,12 +89,15 @@ class Rejaton_Catalog_Post_Types {
 
 		$template_args = array(
 			'labels'              => $template_labels,
-			'public'              => true, // Required by WordPress Core so edit.php and post-new.php are permitted
-			'publicly_queryable'  => false, // Keeps frontend visitors from accessing template single URLs
-			'exclude_from_search' => true,  // Hides from front-end site search
+			'description'         => __( 'Template deskripsi dinamis untuk produk katalog Rejaton', 'rejaton-product-catalog' ),
+			'public'              => false,
+			'publicly_queryable'  => false,
 			'show_ui'             => true,
-			'show_in_menu'        => 'edit.php?post_type=rejaton_product', // Nest neatly inside Katalog Rejaton
-			'query_var'           => true,
+			'show_in_menu'        => 'edit.php?post_type=rejaton_product',
+			'show_in_nav_menus'   => false,
+			'show_in_admin_bar'   => true,
+			'exclude_from_search' => true,
+			'query_var'           => false,
 			'rewrite'             => false,
 			'capability_type'     => 'post',
 			'map_meta_cap'        => true,

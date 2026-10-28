@@ -57,7 +57,7 @@ class Rejaton_Catalog_Template_Editor {
 	 * Render token toolbar right above Classic / WYSIWYG Editor
 	 */
 	public function render_token_bar_above_editor( $post ) {
-		if ( 'rejaton_product_template' !== $post->post_type ) {
+		if ( ! is_object( $post ) || 'rejaton_product_template' !== $post->post_type ) {
 			return;
 		}
 
@@ -84,7 +84,7 @@ class Rejaton_Catalog_Template_Editor {
 	}
 
 	public function render_preview_meta_box( $post ) {
-		$content = $post->post_content;
+		$content = ( is_object( $post ) && isset( $post->post_content ) ) ? $post->post_content : '';
 		$validation = Rejaton_Catalog_Template_Validator::validate_content( $content );
 
 		// Sample products for preview
