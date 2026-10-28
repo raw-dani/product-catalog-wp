@@ -71,13 +71,13 @@ class Rejaton_Catalog_Template_Repository {
 	public static function get_initial_template_content() {
 		return <<<HTML
 <h3>Pompa Air [Tipe Pompa]</h3>
-<p>Pompa air tenaga surya LORENTZ [Tipe Pompa] merupakan solusi pompa air untuk kebutuhan air bersih, dengan kapasitas debit [Debit] liter/detik dan kemampuan head [Rentang Head] meter. Sistem ini dapat dipadukan dengan panel surya berkapasitas [Daya Panel Surya] kWp, berdasarkan konfigurasi teknis yang sesuai dengan spesifikasi pompa dan kebutuhan instalasi.</p>
+<p>Pompa air tenaga surya LORENTZ [Tipe Pompa] merupakan solusi pompa air untuk kebutuhan air bersih, dengan kapasitas debit [Debit] m³/jam dan kemampuan head [Rentang Head] meter. Sistem ini dapat dipadukan dengan panel surya berkapasitas [Daya Panel Surya] kWp, berdasarkan konfigurasi teknis yang sesuai dengan spesifikasi pompa dan kebutuhan instalasi.</p>
 <p>Dengan teknologi pompa air tenaga surya LORENTZ, sistem ini dapat membantu memenuhi kebutuhan air untuk irigasi pertanian, penyediaan air bersih, sumur bor, maupun aplikasi lainnya sesuai karakteristik model pompa.</p>
 
 <h3>Spesifikasi dan Rekomendasi Sistem</h3>
 <ol>
 	<li>Tipe pompa: [Tipe Pompa]</li>
-	<li>Kapasitas debit: [Debit] liter/detik atau [Debit × 3,6] m³/jam</li>
+	<li>Kapasitas debit: [Debit] m³/jam</li>
 	<li>Rentang head: [Rentang Head] meter</li>
 	<li>Rekomendasi kapasitas panel surya: [Daya Panel Surya] kWp</li>
 </ol>

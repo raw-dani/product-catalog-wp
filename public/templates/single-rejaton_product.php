@@ -129,7 +129,7 @@ $all_fields      = Rejaton_Catalog_Field_Registry::get_all_fields();
 				<?php if ( '' !== $debit && null !== $debit ) : ?>
 					<div class="rj-highlight-item">
 						<div class="rj-hl-label"><?php esc_html_e( 'Kapasitas Debit', 'rejaton-product-catalog' ); ?></div>
-						<div class="rj-hl-val"><?php echo esc_html( rejaton_format_number_locale( $debit ) ); ?> <small>liter/detik</small></div>
+						<div class="rj-hl-val"><?php echo esc_html( rejaton_format_number_locale( $debit ) ); ?> <small>m³/jam</small></div>
 					</div>
 				<?php endif; ?>
 

@@ -79,7 +79,7 @@ $cats       = get_the_terms( $product_id, 'rejaton_product_cat' );
 			<?php if ( '' !== $debit && null !== $debit ) : ?>
 				<div class="rj-spec-chip" title="Debit Air">
 					<span class="rj-chip-icon dashicons dashicons-admin-site-alt3"></span>
-					<span class="rj-chip-text"><?php echo esc_html( rejaton_format_number_locale( $debit ) ); ?> L/dtk</span>
+					<span class="rj-chip-text"><?php echo esc_html( rejaton_format_number_locale( $debit ) ); ?> m³/jam</span>
 				</div>
 			<?php endif; ?>
 

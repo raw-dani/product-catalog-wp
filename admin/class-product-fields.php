@@ -74,9 +74,9 @@ class Rejaton_Catalog_Product_Fields {
 			</div>
 
 			<div class="rj-meta-row">
-				<label for="rj_debit"><strong><?php esc_html_e( 'Debit (liter/detik)', 'rejaton-product-catalog' ); ?>:</strong></label>
-				<input type="number" step="any" min="0" name="rj_debit" id="rj_debit" value="<?php echo esc_attr( $debit ); ?>" class="small-text" placeholder="2.5" />
-				<span class="description"><?php esc_html_e( 'Otomatis dihitung menjadi [Debit × 3,6] m³/jam', 'rejaton-product-catalog' ); ?></span>
+				<label for="rj_debit"><strong><?php esc_html_e( 'Debit (m³/jam)', 'rejaton-product-catalog' ); ?>:</strong></label>
+				<input type="number" step="any" min="0" name="rj_debit" id="rj_debit" value="<?php echo esc_attr( $debit ); ?>" class="small-text" placeholder="26" />
+				<span class="description"><?php esc_html_e( 'Kapasitas debit air dalam satuan m³/jam (token [Debit]).', 'rejaton-product-catalog' ); ?></span>
 			</div>
 
 			<div class="rj-meta-row">

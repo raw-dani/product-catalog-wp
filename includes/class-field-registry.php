@@ -35,10 +35,10 @@ class Rejaton_Catalog_Field_Registry {
 				'key'          => 'debit',
 				'label'        => __( 'Debit Air', 'rejaton-product-catalog' ),
 				'type'         => 'number',
-				'unit'         => 'liter/detik',
+				'unit'         => 'm³/jam',
 				'token'        => '[Debit]',
 				'required'     => false,
-				'description'  => __( 'Debit dalam liter/detik. Digunakan juga untuk menghitung m³/jam.', 'rejaton-product-catalog' ),
+				'description'  => __( 'Debit kapasitas pompa dalam satuan m³/jam.', 'rejaton-product-catalog' ),
 				'in_card'      => true,
 				'in_filter'    => true,
 				'in_spec'      => true,
@@ -162,7 +162,7 @@ class Rejaton_Catalog_Field_Registry {
 	public static function get_token_map() {
 		$tokens = array(
 			'[Tipe Pompa]'        => array( 'key' => 'tipe_pompa', 'label' => 'Tipe Pompa', 'unit' => '' ),
-			'[Debit]'             => array( 'key' => 'debit', 'label' => 'Debit', 'unit' => 'liter/detik' ),
+			'[Debit]'             => array( 'key' => 'debit', 'label' => 'Debit', 'unit' => 'm³/jam' ),
 			'[Rentang Head]'      => array( 'key' => 'rentang_head', 'label' => 'Rentang Head', 'unit' => 'meter' ),
 			'[Daya Panel Surya]'  => array( 'key' => 'daya_panel_surya', 'label' => 'Daya Panel Surya', 'unit' => 'kWp' ),
 			'[Debit × 3,6]'       => array( 'key' => 'debit_m3_jam', 'label' => 'Debit m³/jam', 'unit' => 'm³/jam' ),
