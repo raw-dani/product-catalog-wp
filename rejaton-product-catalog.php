@@ -6,7 +6,7 @@
  * Version:           1.0.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
- * Author:            Rejaton Engineering
+ * Author:            Rohmat Ali Wardani
  * Author URI:        https://rejaton.com/
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'REJATON_CATALOG_VERSION', '1.0.0' );
+define( 'REJATON_CATALOG_VERSION', '1.0.1' );
 define( 'REJATON_CATALOG_FILE', __FILE__ );
 define( 'REJATON_CATALOG_PATH', plugin_dir_path( __FILE__ ) );
 define( 'REJATON_CATALOG_URL', plugin_dir_url( __FILE__ ) );

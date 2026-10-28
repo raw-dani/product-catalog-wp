@@ -18,15 +18,30 @@
 		});
 
 		// 2. Single Product Gallery Thumbnail Click
-		$('.rj-thumb-item').on('click', function() {
-			var largeUrl = $(this).data('large');
-			$('.rj-thumb-item').removeClass('active');
-			$(this).addClass('active');
+		$(document).on('click', '.rj-thumb-item', function(e) {
+			e.preventDefault();
+			var $thumb = $(this);
+			var largeUrl = $thumb.data('large') || $thumb.attr('data-large');
+			var largeSrcset = $thumb.data('srcset') || $thumb.attr('data-srcset') || '';
 
-			var mainPhoto = $('#rj-main-photo');
-			mainPhoto.fadeOut(150, function() {
-				mainPhoto.attr('src', largeUrl).fadeIn(150);
-			});
+			if (!largeUrl) {
+				return;
+			}
+
+			$('.rj-thumb-item').removeClass('active');
+			$thumb.addClass('active');
+
+			var $mainPhoto = $('#rj-main-photo');
+			if ($mainPhoto.length) {
+				$mainPhoto.fadeOut(120, function() {
+					if (largeSrcset) {
+						$mainPhoto.attr('srcset', largeSrcset);
+					} else {
+						$mainPhoto.removeAttr('srcset');
+					}
+					$mainPhoto.attr('src', largeUrl).fadeIn(120);
+				});
+			}
 		});
 
 		// 3. AJAX Filter & Sorting Handling

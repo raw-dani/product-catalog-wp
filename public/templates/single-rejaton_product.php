@@ -82,9 +82,13 @@ $all_fields      = Rejaton_Catalog_Field_Registry::get_all_fields();
 			<?php if ( count( $gallery_ids ) > 1 ) : ?>
 				<div class="rj-gallery-thumbs">
 					<?php foreach ( $gallery_ids as $idx => $gid ) :
-						$large_src = wp_get_attachment_image_url( $gid, 'large' );
+						$large_src    = wp_get_attachment_image_url( $gid, 'large' );
+						$large_srcset = wp_get_attachment_image_srcset( $gid, 'large' );
+						if ( empty( $large_src ) ) {
+							$large_src = wp_get_attachment_url( $gid );
+						}
 						?>
-						<button type="button" class="rj-thumb-item<?php if ( 0 === $idx ) echo ' active'; ?>" data-large="<?php echo esc_url( $large_src ); ?>" aria-label="<?php printf( esc_attr__( 'Foto produk %d', 'rejaton-product-catalog' ), $idx + 1 ); ?>">
+						<button type="button" class="rj-thumb-item<?php if ( 0 === $idx ) echo ' active'; ?>" data-large="<?php echo esc_url( $large_src ); ?>" data-srcset="<?php echo esc_attr( $large_srcset ? $large_srcset : '' ); ?>" aria-label="<?php printf( esc_attr__( 'Foto produk %d', 'rejaton-product-catalog' ), $idx + 1 ); ?>">
 							<?php
 							echo wp_get_attachment_image(
 								$gid,
@@ -157,50 +161,13 @@ $all_fields      = Rejaton_Catalog_Field_Registry::get_all_fields();
 		</div>
 	</div>
 
-	<!-- Bottom Section: Dynamic Rendered Description & Spec Table -->
+	<!-- Bottom Section: Dynamic Rendered Description -->
 	<div class="rj-detail-tabs-section">
 		<div class="rj-section-block">
 			<h2 class="rj-section-title"><?php esc_html_e( 'Deskripsi & Ulasan Sistem', 'rejaton-product-catalog' ); ?></h2>
 			<div class="rj-rendered-description">
 				<?php echo $rendered_desc; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
-		</div>
-
-		<!-- Technical Spec Table -->
-		<div class="rj-section-block">
-			<h2 class="rj-section-title"><?php esc_html_e( 'Tabel Spesifikasi Teknis', 'rejaton-product-catalog' ); ?></h2>
-			<table class="rj-spec-table">
-				<tbody>
-					<?php
-					$has_any_spec = false;
-					foreach ( $spec_keys as $skey ) :
-						if ( ! isset( $all_fields[ $skey ] ) ) {
-							continue;
-						}
-						$finfo = $all_fields[ $skey ];
-						$val   = isset( $resolved_values[ $skey ] ) ? $resolved_values[ $skey ] : '';
-
-						if ( '' !== $val && null !== $val ) :
-							$has_any_spec = true;
-							$display = is_numeric( $val ) ? rejaton_format_number_locale( $val ) : esc_html( (string) $val );
-							if ( ! empty( $finfo['unit'] ) && false === strpos( $display, $finfo['unit'] ) ) {
-								$display .= ' ' . esc_html( $finfo['unit'] );
-							}
-							?>
-							<tr>
-								<th><?php echo esc_html( $finfo['label'] ); ?></th>
-								<td><?php echo esc_html( $display ); ?></td>
-							</tr>
-						<?php endif;
-					endforeach;
-
-					if ( ! $has_any_spec ) : ?>
-						<tr>
-							<td colspan="2"><?php esc_html_e( 'Spesifikasi teknis lengkap dapat dikonsultasikan langsung ke tim teknis Rejaton.', 'rejaton-product-catalog' ); ?></td>
-						</tr>
-					<?php endif; ?>
-				</tbody>
-			</table>
 		</div>
 	</div>
 </div>
