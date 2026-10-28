@@ -79,15 +79,16 @@ class Rejaton_Catalog_Product_Fields {
 				<span class="description"><?php esc_html_e( 'Kapasitas debit air dalam satuan m³/jam (token [Debit]).', 'rejaton-product-catalog' ); ?></span>
 			</div>
 
+			<?php
+			$head_val = ( '' !== $head_max && null !== $head_max ) ? $head_max : $head_min;
+			?>
 			<div class="rj-meta-row">
-				<label><strong><?php esc_html_e( 'Rentang Head (meter)', 'rejaton-product-catalog' ); ?>:</strong></label>
+				<label for="rj_head_max"><strong><?php esc_html_e( 'Rentang Head (meter)', 'rejaton-product-catalog' ); ?>:</strong></label>
 				<div style="display:inline-flex; align-items:center; gap:8px;">
-					<input type="number" step="any" min="0" name="rj_head_min" id="rj_head_min" value="<?php echo esc_attr( $head_min ); ?>" class="small-text" placeholder="Min" />
-					<span>s/d</span>
-					<input type="number" step="any" min="0" name="rj_head_max" id="rj_head_max" value="<?php echo esc_attr( $head_max ); ?>" class="small-text" placeholder="Max" />
+					<input type="number" step="any" min="0" name="rj_head_max" id="rj_head_max" value="<?php echo esc_attr( $head_val ); ?>" class="small-text" placeholder="50" />
 					<span>meter</span>
 				</div>
-				<span class="description"><?php esc_html_e( 'Digunakan pada token [Rentang Head] dan filter numerik', 'rejaton-product-catalog' ); ?></span>
+				<span class="description"><?php esc_html_e( 'Nilai head pompa dalam satuan meter (digunakan pada token [Rentang Head]).', 'rejaton-product-catalog' ); ?></span>
 			</div>
 
 			<div class="rj-meta-row">
@@ -236,14 +237,10 @@ class Rejaton_Catalog_Product_Fields {
 			Rejaton_Catalog_Product_Meta::set_meta( $post_id, 'debit', $debit );
 		}
 
-		if ( isset( $_POST['rj_head_min'] ) ) {
-			$head_min = ( '' !== $_POST['rj_head_min'] ) ? floatval( $_POST['rj_head_min'] ) : '';
-			Rejaton_Catalog_Product_Meta::set_meta( $post_id, 'head_min', $head_min );
-		}
-
 		if ( isset( $_POST['rj_head_max'] ) ) {
-			$head_max = ( '' !== $_POST['rj_head_max'] ) ? floatval( $_POST['rj_head_max'] ) : '';
-			Rejaton_Catalog_Product_Meta::set_meta( $post_id, 'head_max', $head_max );
+			$head_val = ( '' !== $_POST['rj_head_max'] ) ? floatval( $_POST['rj_head_max'] ) : '';
+			Rejaton_Catalog_Product_Meta::set_meta( $post_id, 'head_max', $head_val );
+			Rejaton_Catalog_Product_Meta::set_meta( $post_id, 'head_min', $head_val );
 		}
 
 		if ( isset( $_POST['rj_daya_panel_surya'] ) ) {

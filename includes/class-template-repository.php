@@ -22,10 +22,35 @@ class Rejaton_Catalog_Template_Repository {
 		if ( $default_id ) {
 			$post = get_post( $default_id );
 			if ( $post && in_array( $post->post_type, array( 'rejaton_template', 'rejaton_product_template' ), true ) && 'trash' !== $post->post_status ) {
+				$updates = array( 'ID' => $post->ID );
+				$need_update = false;
+
 				// Normalize post type to rejaton_template if it was legacy
 				if ( 'rejaton_product_template' === $post->post_type ) {
-					wp_update_post( array( 'ID' => $post->ID, 'post_type' => 'rejaton_template' ) );
+					$updates['post_type'] = 'rejaton_template';
+					$need_update = true;
 				}
+
+				// Auto-sync legacy debit string if still found in default template
+				if ( false !== strpos( $post->post_content, 'liter/detik atau [Debit × 3,6] m³/jam' ) ) {
+					$updates['post_content'] = str_replace(
+						array(
+							'[Debit] liter/detik atau [Debit × 3,6] m³/jam',
+							'debit [Debit] liter/detik',
+						),
+						array(
+							'[Debit] m³/jam',
+							'debit [Debit] m³/jam',
+						),
+						$post->post_content
+					);
+					$need_update = true;
+				}
+
+				if ( $need_update ) {
+					wp_update_post( $updates );
+				}
+
 				return $default_id;
 			}
 		}

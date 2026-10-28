@@ -75,13 +75,13 @@ function rejaton_format_head_range( $head_min, $head_max, $unit = 'meter' ) {
 		$min = rejaton_format_number_locale( $head_min );
 		$max = rejaton_format_number_locale( $head_max );
 		if ( (float) $head_min === (float) $head_max ) {
-			return $min . ( $unit ? ' ' . $unit : '' );
+			return $max . ( $unit ? ' ' . $unit : '' );
 		}
 		return $min . '–' . $max . ( $unit ? ' ' . $unit : '' );
-	} elseif ( $has_min ) {
-		return 'Mulai dari ' . rejaton_format_number_locale( $head_min ) . ( $unit ? ' ' . $unit : '' );
 	} elseif ( $has_max ) {
-		return 'Hingga ' . rejaton_format_number_locale( $head_max ) . ( $unit ? ' ' . $unit : '' );
+		return rejaton_format_number_locale( $head_max ) . ( $unit ? ' ' . $unit : '' );
+	} elseif ( $has_min ) {
+		return rejaton_format_number_locale( $head_min ) . ( $unit ? ' ' . $unit : '' );
 	}
 
 	return '';

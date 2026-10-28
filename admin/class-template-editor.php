@@ -122,9 +122,9 @@ class Rejaton_Catalog_Template_Editor {
 				// Sample dummy values for initial preview
 				$sample_values = array(
 					'tipe_pompa'       => 'PS2-1800 CS-F',
-					'debit'            => 2.5,
-					'debit_m3_jam'     => 9,
-					'rentang_head'     => '40–80 meter',
+					'debit'            => 26,
+					'debit_m3_jam'     => 26,
+					'rentang_head'     => '50 meter',
 					'daya_panel_surya' => 1.8,
 				);
 				echo Rejaton_Catalog_Template_Renderer::parse_content( $content, $sample_values, true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -183,9 +183,9 @@ class Rejaton_Catalog_Template_Editor {
 		} else {
 			$sample_values = array(
 				'tipe_pompa'       => 'PS2-1800 CS-F',
-				'debit'            => 2.5,
-				'debit_m3_jam'     => 9,
-				'rentang_head'     => '40–80 meter',
+				'debit'            => 26,
+				'debit_m3_jam'     => 26,
+				'rentang_head'     => '50 meter',
 				'daya_panel_surya' => 1.8,
 			);
 			$rendered = Rejaton_Catalog_Template_Renderer::parse_content( $content, $sample_values, true );
