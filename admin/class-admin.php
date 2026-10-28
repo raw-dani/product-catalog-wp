@@ -39,7 +39,7 @@ class Rejaton_Catalog_Admin {
 	public function enqueue_admin_assets( $hook ) {
 		global $post_type;
 
-		if ( 'rejaton_product' === $post_type || 'rejaton_product_template' === $post_type || ( isset( $_GET['page'] ) && strpos( $_GET['page'], 'rejaton' ) !== false ) ) {
+		if ( 'rejaton_product' === $post_type || 'rejaton_template' === $post_type || 'rejaton_product_template' === $post_type || ( isset( $_GET['page'] ) && strpos( $_GET['page'], 'rejaton' ) !== false ) ) {
 			wp_enqueue_media();
 			wp_enqueue_style( 'rejaton-admin-css', REJATON_CATALOG_URL . 'admin/css/admin.css', array(), REJATON_CATALOG_VERSION );
 			wp_enqueue_script( 'rejaton-admin-js', REJATON_CATALOG_URL . 'admin/js/admin.js', array( 'jquery' ), REJATON_CATALOG_VERSION, true );

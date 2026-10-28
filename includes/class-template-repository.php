@@ -21,19 +21,26 @@ class Rejaton_Catalog_Template_Repository {
 
 		if ( $default_id ) {
 			$post = get_post( $default_id );
-			if ( $post && 'rejaton_product_template' === $post->post_type && 'trash' !== $post->post_status ) {
+			if ( $post && in_array( $post->post_type, array( 'rejaton_template', 'rejaton_product_template' ), true ) && 'trash' !== $post->post_status ) {
+				// Normalize post type to rejaton_template if it was legacy
+				if ( 'rejaton_product_template' === $post->post_type ) {
+					wp_update_post( array( 'ID' => $post->ID, 'post_type' => 'rejaton_template' ) );
+				}
 				return $default_id;
 			}
 		}
 
-		// Check if any template exists
+		// Check if any template exists (check both rejaton_template and legacy)
 		$existing = get_posts( array(
-			'post_type'      => 'rejaton_product_template',
+			'post_type'      => array( 'rejaton_template', 'rejaton_product_template' ),
 			'posts_per_page' => 1,
 			'post_status'    => array( 'publish', 'draft' ),
 		) );
 
 		if ( ! empty( $existing ) ) {
+			if ( 'rejaton_product_template' === $existing[0]->post_type ) {
+				wp_update_post( array( 'ID' => $existing[0]->ID, 'post_type' => 'rejaton_template' ) );
+			}
 			update_option( self::DEFAULT_TEMPLATE_OPTION, $existing[0]->ID );
 			return $existing[0]->ID;
 		}
@@ -45,7 +52,7 @@ class Rejaton_Catalog_Template_Repository {
 			'post_title'   => 'Template Default Pompa Air Rejaton',
 			'post_content' => $content,
 			'post_status'  => 'publish',
-			'post_type'    => 'rejaton_product_template',
+			'post_type'    => 'rejaton_template',
 		) );
 
 		if ( ! is_wp_error( $template_id ) ) {
@@ -100,7 +107,7 @@ HTML;
 	 */
 	public static function get_all_templates() {
 		return get_posts( array(
-			'post_type'      => 'rejaton_product_template',
+			'post_type'      => array( 'rejaton_template', 'rejaton_product_template' ),
 			'posts_per_page' => -1,
 			'post_status'    => 'publish',
 			'orderby'        => 'title',
@@ -116,7 +123,7 @@ HTML;
 	 */
 	public static function get_template( $template_id ) {
 		$template = get_post( $template_id );
-		if ( $template && 'rejaton_product_template' === $template->post_type ) {
+		if ( $template && in_array( $template->post_type, array( 'rejaton_template', 'rejaton_product_template' ), true ) ) {
 			return $template;
 		}
 		return null;

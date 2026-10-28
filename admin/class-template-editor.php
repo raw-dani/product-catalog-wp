@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Rejaton_Catalog_Template_Editor {
 
 	public function init() {
-		add_action( 'add_meta_boxes_rejaton_product_template', array( $this, 'register_template_meta_boxes' ) );
+		add_action( 'add_meta_boxes_rejaton_template', array( $this, 'register_template_meta_boxes' ) );
 		add_action( 'edit_form_after_title', array( $this, 'render_token_bar_above_editor' ) );
-		add_action( 'save_post_rejaton_product_template', array( $this, 'validate_and_save_template' ), 10, 2 );
+		add_action( 'save_post_rejaton_template', array( $this, 'validate_and_save_template' ), 10, 2 );
 		add_action( 'wp_ajax_rejaton_preview_template', array( $this, 'ajax_preview_template' ) );
 	}
 
@@ -21,7 +21,7 @@ class Rejaton_Catalog_Template_Editor {
 			'rejaton_template_options_box',
 			__( 'Pengaturan Template', 'rejaton-product-catalog' ),
 			array( $this, 'render_options_meta_box' ),
-			'rejaton_product_template',
+			'rejaton_template',
 			'side',
 			'default'
 		);
@@ -30,7 +30,7 @@ class Rejaton_Catalog_Template_Editor {
 			'rejaton_template_preview_box',
 			__( 'Live Preview & Validasi Token Template', 'rejaton-product-catalog' ),
 			array( $this, 'render_preview_meta_box' ),
-			'rejaton_product_template',
+			'rejaton_template',
 			'normal',
 			'high'
 		);
@@ -57,7 +57,7 @@ class Rejaton_Catalog_Template_Editor {
 	 * Render token toolbar right above Classic / WYSIWYG Editor
 	 */
 	public function render_token_bar_above_editor( $post ) {
-		if ( ! is_object( $post ) || 'rejaton_product_template' !== $post->post_type ) {
+		if ( ! is_object( $post ) || 'rejaton_template' !== $post->post_type ) {
 			return;
 		}
 

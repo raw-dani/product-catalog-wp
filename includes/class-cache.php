@@ -14,6 +14,7 @@ class Rejaton_Catalog_Cache {
 	public function init() {
 		// Invalidate cache when product, template, or taxonomy changes
 		add_action( 'save_post_rejaton_product', array( $this, 'flush_product_cache' ), 10, 1 );
+		add_action( 'save_post_rejaton_template', array( $this, 'flush_template_cache' ), 10, 1 );
 		add_action( 'save_post_rejaton_product_template', array( $this, 'flush_template_cache' ), 10, 1 );
 		add_action( 'update_option_rejaton_catalog_settings', array( $this, 'flush_all_cache' ) );
 		add_action( 'update_option_rejaton_custom_field_definitions', array( $this, 'flush_all_cache' ) );

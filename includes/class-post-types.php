@@ -70,7 +70,7 @@ class Rejaton_Catalog_Post_Types {
 
 		register_post_type( 'rejaton_product', $product_args );
 
-		// 2. Private CPT rejaton_product_template
+		// 2. CPT rejaton_template (Max 20 chars for CPT key)
 		$template_labels = array(
 			'name'               => _x( 'Template Deskripsi', 'Post type general name', 'rejaton-product-catalog' ),
 			'singular_name'      => _x( 'Template', 'Post type singular name', 'rejaton-product-catalog' ),
@@ -107,6 +107,6 @@ class Rejaton_Catalog_Post_Types {
 			'show_in_rest'        => false,
 		);
 
-		register_post_type( 'rejaton_product_template', $template_args );
+		register_post_type( 'rejaton_template', $template_args );
 	}
 }
