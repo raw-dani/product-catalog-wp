@@ -11,6 +11,7 @@ class Rejaton_Catalog_Settings {
 
 	public function init() {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'update_option_rejaton_catalog_settings', array( $this, 'on_settings_updated' ), 10, 2 );
 	}
 
 	public function register_settings() {
@@ -57,5 +58,24 @@ class Rejaton_Catalog_Settings {
 		$sanitized['category_slug'] = ! empty( $input['category_slug'] ) ? sanitize_title( $input['category_slug'] ) : 'kategori-produk';
 
 		return $sanitized;
+	}
+
+	/**
+	 * Flush rewrite rules if slug settings have been updated
+	 *
+	 * @param array $old_value
+	 * @param array $value
+	 */
+	public function on_settings_updated( $old_value, $value ) {
+		$old_product_slug = isset( $old_value['product_slug'] ) ? $old_value['product_slug'] : 'produk';
+		$new_product_slug = isset( $value['product_slug'] ) ? $value['product_slug'] : 'produk';
+
+		$old_category_slug = isset( $old_value['category_slug'] ) ? $old_value['category_slug'] : 'kategori-produk';
+		$new_category_slug = isset( $value['category_slug'] ) ? $value['category_slug'] : 'kategori-produk';
+
+		if ( $old_product_slug !== $new_product_slug || $old_category_slug !== $new_category_slug ) {
+			// Flush rewrite rules agar URL baru segera aktif tanpa error 404
+			flush_rewrite_rules();
+		}
 	}
 }

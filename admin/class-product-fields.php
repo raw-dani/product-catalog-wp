@@ -178,8 +178,12 @@ class Rejaton_Catalog_Product_Fields {
 					</option>
 				<?php endforeach; ?>
 			</select>
-			<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=rejaton_product_template' ) ); ?>" class="button button-secondary" target="_blank" style="margin-left:8px;">
-				<?php esc_html_e( 'Kelola Template di Menu Terpisah', 'rejaton-product-catalog' ); ?>
+			<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=rejaton_product_template' ) ); ?>" class="button button-primary" target="_blank" style="margin-left:8px;">
+				<span class="dashicons dashicons-plus-alt2" style="vertical-align:text-bottom; margin-right:2px;"></span>
+				<?php esc_html_e( 'Buat Template Baru', 'rejaton-product-catalog' ); ?>
+			</a>
+			<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=rejaton_product_template' ) ); ?>" class="button button-secondary" target="_blank" style="margin-left:4px;">
+				<?php esc_html_e( 'Semua Template', 'rejaton-product-catalog' ); ?>
 			</a>
 		</div>
 

@@ -13,7 +13,8 @@ class Rejaton_Catalog_Post_Types {
 	 * Register actions
 	 */
 	public function init() {
-		add_action( 'init', array( $this, 'register_post_types' ) );
+		// Run early on init so edit.php and post-new.php recognise the post type
+		add_action( 'init', array( $this, 'register_post_types' ), 5 );
 	}
 
 	/**
@@ -73,12 +74,14 @@ class Rejaton_Catalog_Post_Types {
 		$template_labels = array(
 			'name'               => _x( 'Template Deskripsi', 'Post type general name', 'rejaton-product-catalog' ),
 			'singular_name'      => _x( 'Template', 'Post type singular name', 'rejaton-product-catalog' ),
+			'menu_name'          => _x( 'Template Deskripsi', 'Admin Menu text', 'rejaton-product-catalog' ),
+			'name_admin_bar'     => _x( 'Template Deskripsi', 'Add New on Toolbar', 'rejaton-product-catalog' ),
 			'add_new'            => __( 'Tambah Template', 'rejaton-product-catalog' ),
 			'add_new_item'       => __( 'Tambah Template Baru', 'rejaton-product-catalog' ),
 			'edit_item'          => __( 'Edit Template', 'rejaton-product-catalog' ),
 			'new_item'           => __( 'Template Baru', 'rejaton-product-catalog' ),
 			'view_item'          => __( 'Lihat Template', 'rejaton-product-catalog' ),
-			'all_items'          => __( 'Semua Template', 'rejaton-product-catalog' ),
+			'all_items'          => __( 'Template Deskripsi', 'rejaton-product-catalog' ),
 			'search_items'       => __( 'Cari Template', 'rejaton-product-catalog' ),
 			'not_found'          => __( 'Tidak ada template ditemukan.', 'rejaton-product-catalog' ),
 			'not_found_in_trash' => __( 'Tidak ada template di kotak sampah.', 'rejaton-product-catalog' ),
@@ -86,13 +89,15 @@ class Rejaton_Catalog_Post_Types {
 
 		$template_args = array(
 			'labels'              => $template_labels,
-			'public'              => false,
-			'publicly_queryable'  => false,
+			'public'              => true, // Required by WordPress Core so edit.php and post-new.php are permitted
+			'publicly_queryable'  => false, // Keeps frontend visitors from accessing template single URLs
+			'exclude_from_search' => true,  // Hides from front-end site search
 			'show_ui'             => true,
-			'show_in_menu'        => 'edit.php?post_type=rejaton_product',
-			'query_var'           => false,
+			'show_in_menu'        => 'edit.php?post_type=rejaton_product', // Nest neatly inside Katalog Rejaton
+			'query_var'           => true,
 			'rewrite'             => false,
 			'capability_type'     => 'post',
+			'map_meta_cap'        => true,
 			'has_archive'         => false,
 			'hierarchical'        => false,
 			'supports'            => array( 'title', 'editor' ),

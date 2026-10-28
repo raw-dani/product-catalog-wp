@@ -84,5 +84,43 @@
 			item.remove();
 		});
 
+		// 3. Dynamic Template Preview Refresh
+		$('#rj_preview_product_select').on('change', function() {
+			var productId = $(this).val();
+			var editorContent = '';
+
+			if (typeof tinymce !== 'undefined' && tinymce.get('content') && !tinymce.get('content').isHidden()) {
+				editorContent = tinymce.get('content').getContent();
+			} else {
+				var textarea = document.getElementById('content');
+				if (textarea) {
+					editorContent = textarea.value;
+				}
+			}
+
+			if (typeof rejaton_admin_vars !== 'undefined') {
+				$('#rj_template_preview_output').css('opacity', '0.5');
+				$.ajax({
+					url: rejaton_admin_vars.ajax_url,
+					type: 'POST',
+					data: {
+						action: 'rejaton_preview_template',
+						nonce: rejaton_admin_vars.nonce,
+						product_id: productId,
+						content: editorContent
+					},
+					success: function(res) {
+						$('#rj_template_preview_output').css('opacity', '1');
+						if (res && res.success && res.data) {
+							$('#rj_template_preview_output').html(res.data.html);
+						}
+					},
+					error: function() {
+						$('#rj_template_preview_output').css('opacity', '1');
+					}
+				});
+			}
+		});
+
 	});
 })(jQuery);

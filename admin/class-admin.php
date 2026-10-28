@@ -25,6 +25,22 @@ class Rejaton_Catalog_Admin {
 			array( $this, 'render_custom_fields_page' )
 		);
 
+		// Submenu: Template Deskripsi (Daftar & Tambah Baru)
+		add_submenu_page(
+			'edit.php?post_type=rejaton_product',
+			__( 'Template Deskripsi', 'rejaton-product-catalog' ),
+			__( 'Template Deskripsi', 'rejaton-product-catalog' ),
+			'edit_posts',
+			'edit.php?post_type=rejaton_product_template'
+		);
+
+		add_submenu_page(
+			'edit.php?post_type=rejaton_product',
+			__( 'Tambah Template Baru', 'rejaton-product-catalog' ),
+			__( 'Tambah Template', 'rejaton-product-catalog' ),
+			'edit_posts',
+			'post-new.php?post_type=rejaton_product_template'
+		);
 
 		// Submenu: Pengaturan Katalog
 		add_submenu_page(
@@ -155,6 +171,31 @@ class Rejaton_Catalog_Admin {
 							<td>
 								<textarea name="rejaton_catalog_settings[whatsapp_message_template]" id="whatsapp_message_template" rows="3" class="large-text"><?php echo esc_textarea( isset( $options['whatsapp_message_template'] ) ? $options['whatsapp_message_template'] : 'Halo CS Rejaton, saya ingin berkonsultasi mengenai produk {product_name} ({product_url}).' ); ?></textarea>
 								<p class="description"><?php esc_html_e( 'Dapat memuat variabel {product_name} dan {product_url}.', 'rejaton-product-catalog' ); ?></p>
+							</td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="rj-settings-card">
+					<h2><?php esc_html_e( 'Pengaturan URL & Slug Permalink', 'rejaton-product-catalog' ); ?></h2>
+					<p class="description"><?php esc_html_e( 'Sesuaikan slug URL di bawah ini agar tidak bentrok dengan halaman WordPress, pos blog, atau plugin lain (seperti WooCommerce).', 'rejaton-product-catalog' ); ?></p>
+					<table class="form-table">
+						<tr>
+							<th scope="row"><label for="product_slug"><?php esc_html_e( 'Slug URL Produk (Archive & Detail)', 'rejaton-product-catalog' ); ?></label></th>
+							<td>
+								<code><?php echo esc_html( home_url( '/' ) ); ?></code>
+								<input type="text" name="rejaton_catalog_settings[product_slug]" id="product_slug" value="<?php echo esc_attr( isset( $options['product_slug'] ) ? $options['product_slug'] : 'produk' ); ?>" class="regular-text" placeholder="produk" />
+								<code>/nama-produk/</code>
+								<p class="description"><?php esc_html_e( 'Default: "produk". Gunakan huruf kecil, angka, atau tanda minus (-). Contoh alternatif: "katalog", "pompa-air", "item".', 'rejaton-product-catalog' ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="category_slug"><?php esc_html_e( 'Slug URL Kategori Produk', 'rejaton-product-catalog' ); ?></label></th>
+							<td>
+								<code><?php echo esc_html( home_url( '/' ) ); ?></code>
+								<input type="text" name="rejaton_catalog_settings[category_slug]" id="category_slug" value="<?php echo esc_attr( isset( $options['category_slug'] ) ? $options['category_slug'] : 'kategori-produk' ); ?>" class="regular-text" placeholder="kategori-produk" />
+								<code>/nama-kategori/</code>
+								<p class="description"><?php esc_html_e( 'Default: "kategori-produk". Contoh alternatif: "kategori-katalog", "jenis-pompa".', 'rejaton-product-catalog' ); ?></p>
 							</td>
 						</tr>
 					</table>

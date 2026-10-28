@@ -13,9 +13,19 @@ class Rejaton_Catalog_Template_Editor {
 		add_action( 'add_meta_boxes_rejaton_product_template', array( $this, 'register_template_meta_boxes' ) );
 		add_action( 'edit_form_after_title', array( $this, 'render_token_bar_above_editor' ) );
 		add_action( 'save_post_rejaton_product_template', array( $this, 'validate_and_save_template' ), 10, 2 );
+		add_action( 'wp_ajax_rejaton_preview_template', array( $this, 'ajax_preview_template' ) );
 	}
 
 	public function register_template_meta_boxes() {
+		add_meta_box(
+			'rejaton_template_options_box',
+			__( 'Pengaturan Template', 'rejaton-product-catalog' ),
+			array( $this, 'render_options_meta_box' ),
+			'rejaton_product_template',
+			'side',
+			'default'
+		);
+
 		add_meta_box(
 			'rejaton_template_preview_box',
 			__( 'Live Preview & Validasi Token Template', 'rejaton-product-catalog' ),
@@ -24,6 +34,23 @@ class Rejaton_Catalog_Template_Editor {
 			'normal',
 			'high'
 		);
+	}
+
+	public function render_options_meta_box( $post ) {
+		$default_id = (int) get_option( Rejaton_Catalog_Template_Repository::DEFAULT_TEMPLATE_OPTION, 0 );
+		$is_default = ( $post->ID === $default_id );
+		wp_nonce_field( 'rejaton_save_template_nonce', 'rejaton_template_nonce' );
+		?>
+		<p>
+			<label>
+				<input type="checkbox" name="rj_is_default_template" value="1" <?php checked( $is_default ); ?> />
+				<strong><?php esc_html_e( 'Jadikan Template Default Global', 'rejaton-product-catalog' ); ?></strong>
+			</label>
+		</p>
+		<p class="description">
+			<?php esc_html_e( 'Template default digunakan secara otomatis untuk semua produk yang tidak memiliki pilihan template khusus.', 'rejaton-product-catalog' ); ?>
+		</p>
+		<?php
 	}
 
 	/**
@@ -116,8 +143,54 @@ class Rejaton_Catalog_Template_Editor {
 			return;
 		}
 
+		if ( isset( $_POST['rejaton_template_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['rejaton_template_nonce'] ) ), 'rejaton_save_template_nonce' ) ) {
+			if ( ! empty( $_POST['rj_is_default_template'] ) ) {
+				update_option( Rejaton_Catalog_Template_Repository::DEFAULT_TEMPLATE_OPTION, $post_id );
+			} else {
+				$current_default = (int) get_option( Rejaton_Catalog_Template_Repository::DEFAULT_TEMPLATE_OPTION, 0 );
+				if ( $current_default === (int) $post_id ) {
+					// Don't uncheck if it's the only default unless another one exists
+				}
+			}
+		}
+
 		// Invalidate cached renders when template is saved
 		$cache = new Rejaton_Catalog_Cache();
 		$cache->flush_template_cache( $post_id );
+	}
+
+	/**
+	 * AJAX endpoint to render live preview for template editor
+	 */
+	public function ajax_preview_template() {
+		check_ajax_referer( 'rejaton_admin_nonce', 'nonce' );
+
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Akses ditolak.', 'rejaton-product-catalog' ) ) );
+		}
+
+		$content = isset( $_POST['content'] ) ? wp_unslash( $_POST['content'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
+
+		if ( $product_id > 0 ) {
+			$raw_meta = Rejaton_Catalog_Product_Meta::get_all_meta( $product_id );
+			$values = array();
+			foreach ( $raw_meta as $mk => $mv ) {
+				$clean_key = str_replace( Rejaton_Catalog_Product_Meta::META_PREFIX, '', $mk );
+				$values[ $clean_key ] = $mv;
+			}
+			$rendered = Rejaton_Catalog_Template_Renderer::parse_content( $content, $values, true );
+		} else {
+			$sample_values = array(
+				'tipe_pompa'       => 'PS2-1800 CS-F',
+				'debit'            => 2.5,
+				'debit_m3_jam'     => 9,
+				'rentang_head'     => '40–80 meter',
+				'daya_panel_surya' => 1.8,
+			);
+			$rendered = Rejaton_Catalog_Template_Renderer::parse_content( $content, $sample_values, true );
+		}
+
+		wp_send_json_success( array( 'html' => $rendered ) );
 	}
 }
