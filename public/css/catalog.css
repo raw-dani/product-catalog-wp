@@ -314,7 +314,6 @@
 .rj-card-header-info {
 	display: flex;
 	flex-direction: column;
-	min-height: 80px;
 	margin-bottom: 12px;
 }
 
