@@ -48,6 +48,7 @@ if ( is_admin() ) {
 	require_once REJATON_CATALOG_PATH . 'admin/class-product-fields.php';
 	require_once REJATON_CATALOG_PATH . 'admin/class-field-manager.php';
 	require_once REJATON_CATALOG_PATH . 'admin/class-template-editor.php';
+	require_once REJATON_CATALOG_PATH . 'admin/class-duplicate.php';
 	require_once REJATON_CATALOG_PATH . 'admin/class-admin-notices.php';
 }
 

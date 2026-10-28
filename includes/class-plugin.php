@@ -55,6 +55,9 @@ class Rejaton_Catalog_Plugin {
 			$template_editor = new Rejaton_Catalog_Template_Editor();
 			$template_editor->init();
 
+			$duplicate = new Rejaton_Catalog_Duplicate();
+			$duplicate->init();
+
 			$notices = new Rejaton_Catalog_Admin_Notices();
 			$notices->init();
 		}
