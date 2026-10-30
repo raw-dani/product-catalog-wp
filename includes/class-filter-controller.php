@@ -117,16 +117,45 @@ class Rejaton_Catalog_Filter_Controller {
 			return '';
 		}
 
-		$output = '<div class="rj-pagination" role="navigation">';
-		for ( $i = 1; $i <= $total; $i++ ) {
-			$active_class = ( $i == $current ) ? ' active' : '';
+		$current = max( 1, absint( $current ) );
+		$total   = max( 1, absint( $total ) );
+
+		$output = '<div class="rj-pagination" role="navigation" aria-label="' . esc_attr__( 'Navigasi Halaman Produk', 'rejaton-product-catalog' ) . '">';
+
+		// Previous button
+		if ( $current > 1 ) {
 			$output .= sprintf(
-				'<button type="button" class="rj-page-btn%s" data-page="%d">%d</button>',
+				'<button type="button" class="rj-page-btn rj-page-prev" data-page="%d" aria-label="%s">&laquo; %s</button>',
+				$current - 1,
+				esc_attr__( 'Halaman Sebelumnya', 'rejaton-product-catalog' ),
+				esc_html__( 'Sebelumnya', 'rejaton-product-catalog' )
+			);
+		}
+
+		for ( $i = 1; $i <= $total; $i++ ) {
+			$is_active = ( (int) $i === (int) $current );
+			$active_class = $is_active ? ' active' : '';
+			$aria_current = $is_active ? ' aria-current="page"' : '';
+
+			$output .= sprintf(
+				'<button type="button" class="rj-page-btn%s" data-page="%d"%s>%d</button>',
 				$active_class,
 				$i,
+				$aria_current,
 				$i
 			);
 		}
+
+		// Next button
+		if ( $current < $total ) {
+			$output .= sprintf(
+				'<button type="button" class="rj-page-btn rj-page-next" data-page="%d" aria-label="%s">%s &raquo;</button>',
+				$current + 1,
+				esc_attr__( 'Halaman Selanjutnya', 'rejaton-product-catalog' ),
+				esc_html__( 'Selanjutnya', 'rejaton-product-catalog' )
+			);
+		}
+
 		$output .= '</div>';
 
 		return $output;

@@ -47,7 +47,13 @@
 		// 3. AJAX Filter & Sorting Handling
 		function executeFilter(page) {
 			page = page || 1;
-			var formData = $('#rj-filter-form').serializeArray();
+			var formData = $('#rj-filter-form').length ? $('#rj-filter-form').serializeArray() : [];
+
+			// If per_page is specified on wrapper (from shortcode attributes), preserve it
+			var wrapperPerPage = $('#rj-pagination-wrapper').data('per-page') || $('#rj-pagination-wrapper').attr('data-per-page');
+			if (wrapperPerPage) {
+				formData.push({ name: 'per_page', value: wrapperPerPage });
+			}
 
 			formData.push({ name: 'action', value: 'rejaton_filter_products' });
 			formData.push({ name: 'nonce', value: (typeof rejaton_ajax_vars !== 'undefined') ? rejaton_ajax_vars.nonce : '' });
@@ -88,13 +94,13 @@
 		}
 
 		// Trigger filter on form submit
-		$('#rj-filter-form').on('submit', function(e) {
+		$(document).on('submit', '#rj-filter-form', function(e) {
 			e.preventDefault();
 			executeFilter(1);
 		});
 
 		// Trigger on sorting change
-		$('#rj-sort-select').on('change', function() {
+		$(document).on('change', '#rj-sort-select', function() {
 			executeFilter(1);
 		});
 

@@ -51,6 +51,7 @@ class Rejaton_Catalog_Shortcodes {
 		$show_filters = ( 'true' === $atts['show_filters'] );
 		$show_sorting = ( 'true' === $atts['show_sorting'] );
 		$desktop_cols = max( 1, min( 4, (int) $atts['columns'] ) );
+		$is_shortcode = true;
 
 		require REJATON_CATALOG_PATH . 'public/templates/archive-rejaton_product.php';
 		return ob_get_clean();

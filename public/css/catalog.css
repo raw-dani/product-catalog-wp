@@ -499,6 +499,12 @@
 	color: #fff;
 }
 
+.rj-page-btn.rj-page-prev,
+.rj-page-btn.rj-page-next {
+	padding: 0 14px;
+	font-weight: 500;
+}
+
 /* Detail Page */
 .rj-breadcrumbs {
 	font-size: 13px;

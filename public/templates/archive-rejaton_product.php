@@ -7,8 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// In case this file is loaded directly via archive template
-if ( ! isset( $query ) ) {
+// In case this file is loaded directly via archive template (not via shortcode)
+if ( empty( $is_shortcode ) ) {
 	$params = Rejaton_Catalog_Filter_Controller::parse_filter_request( $_GET );
 	$query  = Rejaton_Catalog_Product_Query::get_products( $params );
 	$show_filters = true;
@@ -54,6 +54,9 @@ $grid_class = 'rj-product-grid rj-cols-' . esc_attr( isset( $desktop_cols ) ? $d
 					</div>
 
 					<form id="rj-filter-form" class="rj-filter-form" method="get">
+						<?php if ( ! empty( $params['per_page'] ) ) : ?>
+							<input type="hidden" name="per_page" value="<?php echo esc_attr( $params['per_page'] ); ?>" />
+						<?php endif; ?>
 						<!-- Keyword Search -->
 						<div class="rj-filter-group">
 							<label for="rj_search_input" class="rj-filter-label"><?php esc_html_e( 'Pencarian Model / Seri', 'rejaton-product-catalog' ); ?></label>
@@ -129,7 +132,7 @@ $grid_class = 'rj-product-grid rj-cols-' . esc_attr( isset( $desktop_cols ) ? $d
 			</div>
 
 			<!-- Pagination -->
-			<div class="rj-pagination-wrapper" id="rj-pagination-wrapper">
+			<div class="rj-pagination-wrapper" id="rj-pagination-wrapper" data-per-page="<?php echo esc_attr( isset( $params['per_page'] ) ? $params['per_page'] : '' ); ?>">
 				<?php
 				$total_pages = $query->max_num_pages;
 				$current_paged = isset( $params['paged'] ) ? $params['paged'] : 1;
@@ -141,6 +144,6 @@ $grid_class = 'rj-product-grid rj-cols-' . esc_attr( isset( $desktop_cols ) ? $d
 </div>
 
 <?php
-if ( ! isset( $query ) ) {
+if ( empty( $is_shortcode ) ) {
 	get_footer();
 }

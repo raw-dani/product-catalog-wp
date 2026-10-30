@@ -157,14 +157,28 @@ class Rejaton_Catalog_Product_Query {
 				$args['order']   = 'DESC';
 				break;
 			case 'debit_asc':
-				$args['meta_key'] = '_rj_debit';
-				$args['orderby']  = 'meta_value_num';
-				$args['order']    = 'ASC';
+				$args['meta_query'] = isset( $args['meta_query'] ) ? $args['meta_query'] : array();
+				$args['meta_query']['debit_clause'] = array(
+					'key'     => '_rj_debit',
+					'type'    => 'DECIMAL(10,2)',
+					'compare' => 'EXISTS',
+				);
+				$args['orderby'] = array(
+					'debit_clause' => 'ASC',
+					'date'         => 'DESC',
+				);
 				break;
 			case 'debit_desc':
-				$args['meta_key'] = '_rj_debit';
-				$args['orderby']  = 'meta_value_num';
-				$args['order']    = 'DESC';
+				$args['meta_query'] = isset( $args['meta_query'] ) ? $args['meta_query'] : array();
+				$args['meta_query']['debit_clause'] = array(
+					'key'     => '_rj_debit',
+					'type'    => 'DECIMAL(10,2)',
+					'compare' => 'EXISTS',
+				);
+				$args['orderby'] = array(
+					'debit_clause' => 'DESC',
+					'date'         => 'DESC',
+				);
 				break;
 			case 'date_asc':
 				$args['orderby'] = 'date';
