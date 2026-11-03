@@ -40,6 +40,17 @@ class Rejaton_Catalog_Filter_Controller {
 			$params['tipe_pompa'] = sanitize_text_field( wp_unslash( $request['tipe_pompa'] ) );
 		}
 
+		if ( ! empty( $request['debit_tier'] ) ) {
+			if ( is_array( $request['debit_tier'] ) ) {
+				$params['debit_tier'] = array_map( 'absint', wp_unslash( $request['debit_tier'] ) );
+			} else {
+				$params['debit_tier'] = array( absint( wp_unslash( $request['debit_tier'] ) ) );
+			}
+			$params['debit_tier'] = array_filter( $params['debit_tier'], function( $v ) {
+				return $v >= 1 && $v <= 10;
+			} );
+		}
+
 		if ( isset( $request['debit_min'] ) && '' !== $request['debit_min'] ) {
 			$params['debit_min'] = floatval( $request['debit_min'] );
 		}

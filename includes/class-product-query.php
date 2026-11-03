@@ -75,6 +75,46 @@ class Rejaton_Catalog_Product_Query {
 			);
 		}
 
+		// Debit tier filter (1 s/d 10 Liter/detik)
+		// Tiap tier N memiliki rentang: N * 3.6 <= _rj_debit < (N + 1) * 3.6
+		if ( ! empty( $params['debit_tier'] ) ) {
+			$tier_clauses = array();
+			$tiers = is_array( $params['debit_tier'] ) ? $params['debit_tier'] : array( $params['debit_tier'] );
+
+			foreach ( $tiers as $tier ) {
+				$tier = absint( $tier );
+				if ( $tier < 1 || $tier > 10 ) {
+					continue;
+				}
+
+				$min_m3 = round( $tier * 3.6, 2 );
+				$max_m3 = round( ( $tier + 1 ) * 3.6, 2 );
+
+				$tier_clauses[] = array(
+					'relation' => 'AND',
+					array(
+						'key'     => '_rj_debit',
+						'value'   => $min_m3,
+						'type'    => 'DECIMAL(10,2)',
+						'compare' => '>=',
+					),
+					array(
+						'key'     => '_rj_debit',
+						'value'   => $max_m3,
+						'type'    => 'DECIMAL(10,2)',
+						'compare' => '<',
+					),
+				);
+			}
+
+			if ( ! empty( $tier_clauses ) ) {
+				if ( count( $tier_clauses ) > 1 ) {
+					$tier_clauses['relation'] = 'OR';
+				}
+				$meta_query[] = $tier_clauses;
+			}
+		}
+
 		// Debit range filter
 		if ( isset( $params['debit_min'] ) && '' !== $params['debit_min'] && is_numeric( $params['debit_min'] ) ) {
 			$meta_query[] = array(

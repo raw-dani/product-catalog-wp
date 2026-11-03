@@ -22,8 +22,22 @@ $all_cats = get_terms( array(
 	'hide_empty' => true,
 ) );
 
-$selected_cats = isset( $params['category'] ) ? (array) $params['category'] : array();
+$selected_cats   = isset( $params['category'] ) ? (array) $params['category'] : array();
+$selected_debit  = isset( $params['debit_tier'] ) ? (array) $params['debit_tier'] : array();
 $grid_class = 'rj-product-grid rj-cols-' . esc_attr( isset( $desktop_cols ) ? $desktop_cols : 3 );
+
+$debit_tiers = array(
+	1  => '1 Liter/detik (3,6 m³/jam)',
+	2  => '2 Liter/detik (7,2 m³/jam)',
+	3  => '3 Liter/detik (10,8 m³/jam)',
+	4  => '4 Liter/detik (14,4 m³/jam)',
+	5  => '5 Liter/detik (18,0 m³/jam)',
+	6  => '6 Liter/detik (21,6 m³/jam)',
+	7  => '7 Liter/detik (25,2 m³/jam)',
+	8  => '8 Liter/detik (28,8 m³/jam)',
+	9  => '9 Liter/detik (32,4 m³/jam)',
+	10 => '10 Liter/detik (36,0 m³/jam)',
+);
 ?>
 
 <div class="rj-catalog-wrapper" id="rj-catalog-root">
@@ -80,6 +94,19 @@ $grid_class = 'rj-product-grid rj-cols-' . esc_attr( isset( $desktop_cols ) ? $d
 								</div>
 							</div>
 						<?php endif; ?>
+
+						<!-- Debit Range / Kapasitas Debit Filter -->
+						<div class="rj-filter-group">
+							<div class="rj-filter-label"><?php esc_html_e( 'Kapasitas Debit', 'rejaton-product-catalog' ); ?></div>
+							<div class="rj-filter-checklist">
+								<?php foreach ( $debit_tiers as $tier_val => $tier_label ) : ?>
+									<label class="rj-checkbox-label">
+										<input type="checkbox" name="debit_tier[]" value="<?php echo esc_attr( $tier_val ); ?>" <?php checked( in_array( $tier_val, $selected_debit ) ); ?> />
+										<span><?php echo esc_html( $tier_label ); ?></span>
+									</label>
+								<?php endforeach; ?>
+							</div>
+						</div>
 
 
 						<div class="rj-filter-actions">
