@@ -99,6 +99,35 @@
 			executeFilter(1);
 		});
 
+		// Live Search input handling (auto search >= 3 chars, reset to all if emptied)
+		var searchTimer = null;
+		var lastSearchVal = $('#rj_search_input').val() || '';
+
+		$(document).on('input', '#rj_search_input', function() {
+			var currentVal = $.trim($(this).val());
+
+			// Jika nilai tidak berubah (misal tombol panah / modifier)
+			if (currentVal === lastSearchVal) {
+				return;
+			}
+
+			clearTimeout(searchTimer);
+
+			// Jika dihapus semua -> langsung tampilkan semua data (pencarian kosong)
+			if (currentVal.length === 0) {
+				lastSearchVal = '';
+				searchTimer = setTimeout(function() {
+					executeFilter(1);
+				}, 250);
+			} else if (currentVal.length >= 3) {
+				// Jika sudah memasukkan minimal 3 huruf -> otomatis mencari dengan debounce 400ms
+				lastSearchVal = currentVal;
+				searchTimer = setTimeout(function() {
+					executeFilter(1);
+				}, 400);
+			}
+		});
+
 		// Trigger on sorting change
 		$(document).on('change', '#rj-sort-select', function() {
 			executeFilter(1);
@@ -115,6 +144,7 @@
 		$('#rj-reset-filter').on('click', function(e) {
 			e.preventDefault();
 			$('#rj-filter-form')[0].reset();
+			lastSearchVal = '';
 			executeFilter(1);
 		});
 
