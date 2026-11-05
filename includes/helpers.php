@@ -38,6 +38,36 @@ function rejaton_calculate_debit_m3_jam( $liters_per_second, $decimals = 2 ) {
 }
 
 /**
+ * Calculate liters/second from m3/hour.
+ * Formula: liters/sec = (m3/hour) / 3.6
+ *
+ * @param float|int|string $m3_per_jam
+ * @param int $decimals
+ * @return float|null
+ */
+function rejaton_calculate_debit_liter_per_detik( $m3_per_jam, $decimals = 2 ) {
+	if ( '' === $m3_per_jam || null === $m3_per_jam ) {
+		return null;
+	}
+
+	if ( is_string( $m3_per_jam ) ) {
+		$m3_per_jam = str_replace( ',', '.', trim( $m3_per_jam ) );
+	}
+
+	if ( ! is_numeric( $m3_per_jam ) ) {
+		return null;
+	}
+
+	$val = (float) $m3_per_jam;
+	if ( $val < 0 ) {
+		return null;
+	}
+
+	$result = $val / 3.6;
+	return round( $result, $decimals );
+}
+
+/**
  * Format numeric value for Indonesian locale display.
  * Example: 2.5 -> 2,5 or 9.00 -> 9
  *

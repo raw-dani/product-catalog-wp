@@ -96,6 +96,19 @@ class Rejaton_Catalog_Field_Registry {
 				'in_spec'      => true,
 				'is_system'    => true,
 			),
+			'debit_per_detik'   => array(
+				'key'          => 'debit_per_detik',
+				'label'        => __( 'Debit per Detik (Liter/detik)', 'rejaton-product-catalog' ),
+				'type'         => 'derived',
+				'unit'         => 'liter/detik',
+				'token'        => '[Debit per detik]',
+				'required'     => false,
+				'description'  => __( 'Otomatis dihitung dari Debit m³/jam ÷ 3,6.', 'rejaton-product-catalog' ),
+				'in_card'      => false,
+				'in_filter'    => false,
+				'in_spec'      => false,
+				'is_system'    => true,
+			),
 			'debit_m3_jam'      => array(
 				'key'          => 'debit_m3_jam',
 				'label'        => __( 'Debit m³/jam', 'rejaton-product-catalog' ),
@@ -163,6 +176,7 @@ class Rejaton_Catalog_Field_Registry {
 		$tokens = array(
 			'[Tipe Pompa]'        => array( 'key' => 'tipe_pompa', 'label' => 'Tipe Pompa', 'unit' => '' ),
 			'[Debit]'             => array( 'key' => 'debit', 'label' => 'Debit', 'unit' => 'm³/jam' ),
+			'[Debit per detik]'   => array( 'key' => 'debit_per_detik', 'label' => 'Debit per Detik', 'unit' => 'liter/detik' ),
 			'[Rentang Head]'      => array( 'key' => 'rentang_head', 'label' => 'Rentang Head', 'unit' => 'meter' ),
 			'[Daya Panel Surya]'  => array( 'key' => 'daya_panel_surya', 'label' => 'Daya Panel Surya', 'unit' => 'kWp' ),
 			'[Debit × 3,6]'       => array( 'key' => 'debit_m3_jam', 'label' => 'Debit m³/jam', 'unit' => 'm³/jam' ),

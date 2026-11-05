@@ -31,16 +31,20 @@ class Rejaton_Catalog_Template_Repository {
 					$need_update = true;
 				}
 
-				// Auto-sync legacy debit string if still found in default template
-				if ( false !== strpos( $post->post_content, 'liter/detik atau [Debit × 3,6] m³/jam' ) ) {
+				// Update template to new debit format if it still uses legacy format
+				if ( false !== strpos( $post->post_content, 'Kapasitas debit: [Debit] m³/jam' ) || false !== strpos( $post->post_content, 'Kapasitas debit: [Debit] m3/jam' ) ) {
 					$updates['post_content'] = str_replace(
 						array(
-							'[Debit] liter/detik atau [Debit × 3,6] m³/jam',
-							'debit [Debit] liter/detik',
+							'<li>Kapasitas debit: [Debit] m³/jam</li>',
+							'<li>Kapasitas debit: [Debit] m3/jam</li>',
+							'Kapasitas debit: [Debit] m³/jam',
+							'Kapasitas debit: [Debit] m3/jam',
 						),
 						array(
-							'[Debit] m³/jam',
-							'debit [Debit] m³/jam',
+							'<li>Debit pompa air: [Debit per detik] liter/detik atau [Debit] m³/jam</li>',
+							'<li>Debit pompa air: [Debit per detik] liter/detik atau [Debit] m³/jam</li>',
+							'Debit pompa air: [Debit per detik] liter/detik atau [Debit] m³/jam',
+							'Debit pompa air: [Debit per detik] liter/detik atau [Debit] m³/jam',
 						),
 						$post->post_content
 					);
@@ -102,7 +106,7 @@ class Rejaton_Catalog_Template_Repository {
 <h3>Spesifikasi dan Rekomendasi Sistem</h3>
 <ol>
 	<li>Tipe pompa: [Tipe Pompa]</li>
-	<li>Kapasitas debit: [Debit] m³/jam</li>
+	<li>Debit pompa air: [Debit per detik] liter/detik atau [Debit] m³/jam</li>
 	<li>Rentang head: [Rentang Head] meter</li>
 	<li>Rekomendasi kapasitas panel surya: [Daya Panel Surya] kWp</li>
 </ol>
@@ -178,7 +182,7 @@ HTML;
 	public static function migrate_legacy_templates() {
 		// Only run if not already migrated or once per day/option
 		$migrated_ver = get_option( 'rejaton_templates_debit_migrated', '' );
-		if ( '1.0.2' === $migrated_ver ) {
+		if ( '1.0.7' === $migrated_ver ) {
 			return;
 		}
 
@@ -192,15 +196,20 @@ HTML;
 			$needs_update = false;
 			$new_content  = $t->post_content;
 
-			if ( false !== strpos( $new_content, 'liter/detik' ) || false !== strpos( $new_content, '3,6' ) ) {
-				$new_content = preg_replace(
-					'/\[Debit\]\s*(?:liter\/detik|l\/detik|lps)\s*(?:atau|\/)\s*\[Debit\s*(?:×|\*|x)\s*3\,?6\]\s*m[³3]\/jam/iu',
-					'[Debit] m³/jam',
-					$new_content
-				);
-				$new_content = preg_replace(
-					'/\[Debit\]\s*(?:liter\/detik|l\/detik|lps)/iu',
-					'[Debit] m³/jam',
+			if ( false !== strpos( $new_content, 'Kapasitas debit: [Debit]' ) ) {
+				$new_content = str_replace(
+					array(
+						'<li>Kapasitas debit: [Debit] m³/jam</li>',
+						'<li>Kapasitas debit: [Debit] m3/jam</li>',
+						'Kapasitas debit: [Debit] m³/jam',
+						'Kapasitas debit: [Debit] m3/jam',
+					),
+					array(
+						'<li>Debit pompa air: [Debit per detik] liter/detik atau [Debit] m³/jam</li>',
+						'<li>Debit pompa air: [Debit per detik] liter/detik atau [Debit] m³/jam</li>',
+						'Debit pompa air: [Debit per detik] liter/detik atau [Debit] m³/jam',
+						'Debit pompa air: [Debit per detik] liter/detik atau [Debit] m³/jam',
+					),
 					$new_content
 				);
 				if ( $new_content !== $t->post_content ) {
@@ -222,7 +231,7 @@ HTML;
 			}
 		}
 
-		update_option( 'rejaton_templates_debit_migrated', '1.0.2' );
+		update_option( 'rejaton_templates_debit_migrated', '1.0.7' );
 
 		// Flush all caches so frontends see updated content immediately
 		if ( class_exists( 'Rejaton_Catalog_Cache' ) ) {

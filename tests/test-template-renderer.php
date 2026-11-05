@@ -69,6 +69,9 @@ echo "=== Menjalankan Unit Test Rejaton Product Catalog ===\n\n";
 $debit_res = rejaton_calculate_debit_m3_jam( 2.5 );
 assert_test( 9.0 === (float) $debit_res, 'Debit 2.5 L/detik menghasilkan tepat 9.0 m³/jam' );
 
+$debit_sec_res = rejaton_calculate_debit_liter_per_detik( 36 );
+assert_test( 10.0 === (float) $debit_sec_res, 'Debit 36 m³/jam menghasilkan tepat 10.0 liter/detik' );
+
 $debit_res_str = rejaton_calculate_debit_m3_jam( '2,5' );
 assert_test( 9.0 === (float) $debit_res_str, 'Debit string dengan koma "2,5" dikonversi benar menjadi 9.0' );
 

@@ -79,25 +79,8 @@ $debit_tiers = array(
 							</div>
 						</div>
 
-						<!-- Categories (Hierarchical Checkboxes) -->
-						<?php if ( ! empty( $all_cats ) && ! is_wp_error( $all_cats ) ) : ?>
-							<div class="rj-filter-group">
-								<div class="rj-filter-label"><?php esc_html_e( 'Kategori Produk', 'rejaton-product-catalog' ); ?></div>
-								<div class="rj-filter-checklist">
-									<?php foreach ( $all_cats as $cat ) : ?>
-										<label class="rj-checkbox-label">
-											<input type="checkbox" name="cat[]" value="<?php echo esc_attr( $cat->slug ); ?>" <?php checked( in_array( $cat->slug, $selected_cats ) ); ?> />
-											<span><?php echo esc_html( $cat->name ); ?></span>
-											<span class="rj-count">(<?php echo esc_html( $cat->count ); ?>)</span>
-										</label>
-									<?php endforeach; ?>
-								</div>
-							</div>
-						<?php endif; ?>
-
 						<!-- Debit Range / Kapasitas Debit Filter -->
-						<div class="rj-filter-group">
-							<div class="rj-filter-label"><?php esc_html_e( 'Kapasitas Debit', 'rejaton-product-catalog' ); ?></div>
+						<div class="rj-filter-group">							
 							<div class="rj-filter-checklist">
 								<?php foreach ( $debit_tiers as $tier_val => $tier_label ) : ?>
 									<label class="rj-checkbox-label">

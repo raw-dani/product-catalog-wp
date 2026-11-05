@@ -122,8 +122,9 @@ class Rejaton_Catalog_Template_Editor {
 				// Sample dummy values for initial preview
 				$sample_values = array(
 					'tipe_pompa'       => 'PS2-1800 CS-F',
-					'debit'            => 26,
-					'debit_m3_jam'     => 26,
+					'debit'            => 36,
+					'debit_per_detik'  => 10,
+					'debit_m3_jam'     => 36,
 					'rentang_head'     => '50 meter',
 					'daya_panel_surya' => 1.8,
 				);
@@ -183,8 +184,9 @@ class Rejaton_Catalog_Template_Editor {
 		} else {
 			$sample_values = array(
 				'tipe_pompa'       => 'PS2-1800 CS-F',
-				'debit'            => 26,
-				'debit_m3_jam'     => 26,
+				'debit'            => 36,
+				'debit_per_detik'  => 10,
+				'debit_m3_jam'     => 36,
 				'rentang_head'     => '50 meter',
 				'daya_panel_surya' => 1.8,
 			);

@@ -82,6 +82,10 @@ class Rejaton_Catalog_Product_Meta {
 		$m3_jam = rejaton_calculate_debit_m3_jam( $debit );
 		$values['debit_m3_jam'] = ( null !== $m3_jam ) ? $m3_jam : '';
 
+		// Derived: Debit per detik (L/detik dari m3/jam)
+		$liter_detik = rejaton_calculate_debit_liter_per_detik( $debit );
+		$values['debit_per_detik'] = ( null !== $liter_detik ) ? $liter_detik : '';
+
 		// Custom fields
 		$custom_defs = Rejaton_Catalog_Field_Registry::get_custom_fields();
 		foreach ( $custom_defs as $key => $def ) {
