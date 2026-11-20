@@ -76,6 +76,7 @@ $debit_tiers = array(
 							<label for="rj_search_input" class="rj-filter-label"><?php esc_html_e( 'Pencarian Model / Seri', 'rejaton-product-catalog' ); ?></label>
 							<div class="rj-search-input-wrap">
 								<input type="text" name="s_prod" id="rj_search_input" value="<?php echo esc_attr( isset( $params['search'] ) ? $params['search'] : '' ); ?>" placeholder="Contoh: PS2, Submersible..." />
+								<div class="rj-input-spinner" id="rj-search-spinner" style="display:none;" aria-hidden="true"></div>
 							</div>
 						</div>
 
@@ -125,6 +126,7 @@ $debit_tiers = array(
 			<!-- Loading Overlay -->
 			<div class="rj-loading-overlay" id="rj-loading-spinner" style="display:none;">
 				<div class="rj-spinner"></div>
+				<div class="rj-loading-text"><?php esc_html_e( 'Memuat produk...', 'rejaton-product-catalog' ); ?></div>
 			</div>
 
 			<!-- Products Grid -->

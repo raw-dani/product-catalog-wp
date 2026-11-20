@@ -60,7 +60,9 @@
 			formData.push({ name: 'sort', value: $('#rj-sort-select').val() });
 			formData.push({ name: 'paged', value: page });
 
-			$('#rj-loading-spinner').show();
+			$('#rj-loading-spinner').fadeIn(150);
+			$('#rj-search-spinner').show();
+			$('#rj-products-grid').css('opacity', '0.4');
 
 			$.ajax({
 				url: (typeof rejaton_ajax_vars !== 'undefined') ? rejaton_ajax_vars.ajax_url : '/wp-admin/admin-ajax.php',
@@ -68,7 +70,9 @@
 				data: formData,
 				dataType: 'json',
 				success: function(res) {
-					$('#rj-loading-spinner').hide();
+					$('#rj-loading-spinner').fadeOut(150);
+					$('#rj-search-spinner').hide();
+					$('#rj-products-grid').css('opacity', '1');
 					if (res.success && res.data) {
 						$('#rj-products-grid').html(res.data.grid_html);
 						$('#rj-pagination-wrapper').html(res.data.pagination_html);
@@ -87,6 +91,8 @@
 				},
 				error: function() {
 					$('#rj-loading-spinner').hide();
+					$('#rj-search-spinner').hide();
+					$('#rj-products-grid').css('opacity', '1');
 					// Fallback to normal form submit if AJAX fails
 					$('#rj-filter-form').off('submit').submit();
 				}
@@ -120,11 +126,17 @@
 					executeFilter(1);
 				}, 250);
 			} else if (currentVal.length >= 3) {
+				// Tampilkan animasi spinner di input box saat user mengetik
+				$('#rj-search-spinner').show();
+
 				// Jika sudah memasukkan minimal 3 huruf -> otomatis mencari dengan debounce 400ms
 				lastSearchVal = currentVal;
 				searchTimer = setTimeout(function() {
 					executeFilter(1);
 				}, 400);
+			} else {
+				// Kurang dari 3 karakter
+				$('#rj-search-spinner').hide();
 			}
 		});
 
@@ -144,6 +156,7 @@
 		$('#rj-reset-filter').on('click', function(e) {
 			e.preventDefault();
 			$('#rj-filter-form')[0].reset();
+			$('#rj-search-spinner').hide();
 			lastSearchVal = '';
 			executeFilter(1);
 		});
