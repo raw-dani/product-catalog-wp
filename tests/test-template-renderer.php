@@ -48,6 +48,7 @@ require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/class-field-registry.php';
 require_once __DIR__ . '/../includes/class-template-validator.php';
 require_once __DIR__ . '/../includes/class-template-renderer.php';
+require_once __DIR__ . '/../includes/class-template-repository.php';
 
 $tests_passed = 0;
 $tests_total = 0;
@@ -121,7 +122,23 @@ assert_test( strpos( $rendered, 'PS2-1800 CS-F' ) !== false, 'Render menghasilka
 assert_test( strpos( $rendered, '9 m³/jam' ) !== false, 'Render menghasilkan nilai debit m³/jam yang tepat' );
 assert_test( strpos( $rendered, '1,8' ) !== false || strpos( $rendered, '1.8' ) !== false, 'Render menampilkan format angka daya yang tepat' );
 
-// 5. Test Conditional Block [IF:field]
+// 6. Test Dynamic Month and Year Helper
+assert_test( 'Januari' === rejaton_get_indonesian_month_name( 1 ), 'Bulan 1 adalah Januari' );
+assert_test( 'November' === rejaton_get_indonesian_month_name( 11 ), 'Bulan 11 adalah November' );
+
+$template_date = 'Produk diakses pada [Bulan] [Tahun]';
+$data_date = array(
+	'bulan' => 'Januari',
+	'tahun' => '2027',
+);
+$rendered_date = Rejaton_Catalog_Template_Renderer::parse_content( $template_date, $data_date, false );
+assert_test( 'Produk diakses pada Januari 2027' === $rendered_date, 'Token [Bulan] dan [Tahun] di-render dengan benar' );
+
+// 7. Test PDF Template Content Validation
+$pdf_template = Rejaton_Catalog_Template_Repository::get_pdf_template_content();
+$val_pdf = Rejaton_Catalog_Template_Validator::validate_content( $pdf_template );
+assert_test( in_array( '[Tipe Pompa]', $val_pdf['valid'] ) && in_array( '[Bulan]', $val_pdf['valid'] ) && in_array( '[Tahun]', $val_pdf['valid'] ), 'Template PDF memiliki semua token yang valid' );
+assert_test( empty( $val_pdf['invalid'] ), 'Tidak ada token invalid pada Template PDF baru' );
 $cond_template = 'Pompa [Tipe Pompa][IF:daya_panel_surya] Rekomendasi Solar: [Daya Panel Surya] kWp[/IF]';
 $rendered_with_val = Rejaton_Catalog_Template_Renderer::parse_content( $cond_template, $data, false );
 assert_test( strpos( $rendered_with_val, 'Rekomendasi Solar:' ) !== false && strpos( $rendered_with_val, 'kWp' ) !== false, 'Conditional [IF] tampil saat field berisi nilai' );

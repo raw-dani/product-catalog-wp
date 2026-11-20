@@ -29,9 +29,17 @@ class Rejaton_Catalog_Product_Query {
 			'posts_per_page' => $per_page,
 		);
 
-		// 1. Keyword search
+		// 1. Keyword search (Judul, Konten, Excerpt, Custom Fields & Template Deskripsi)
 		if ( ! empty( $params['search'] ) ) {
-			$args['s'] = sanitize_text_field( $params['search'] );
+			$search_keyword = sanitize_text_field( $params['search'] );
+			$matching_ids = self::get_matching_product_ids( $search_keyword );
+
+			if ( empty( $matching_ids ) ) {
+				// Tidak ada produk yang cocok sama sekali
+				$args['post__in'] = array( 0 );
+			} else {
+				$args['post__in'] = $matching_ids;
+			}
 		}
 
 		// 2. Tax query (Categories & Tags)
@@ -232,5 +240,75 @@ class Rejaton_Catalog_Product_Query {
 		}
 
 		return new WP_Query( $args );
+	}
+
+	/**
+	 * Find matching product IDs across Title, Content, Excerpt, Custom Fields, and Dynamic Template Descriptions
+	 *
+	 * @param string $keyword
+	 * @return array Array of matched post IDs
+	 */
+	public static function get_matching_product_ids( $keyword ) {
+		global $wpdb;
+
+		$keyword = trim( $keyword );
+		if ( empty( $keyword ) ) {
+			return array();
+		}
+
+		$like = '%' . $wpdb->esc_like( $keyword ) . '%';
+
+		// 1. Search in posts table (post_title, post_content, post_excerpt) for rejaton_product
+		$post_ids_sql = $wpdb->prepare(
+			"SELECT ID FROM {$wpdb->posts}
+			WHERE post_type = 'rejaton_product'
+			AND post_status = 'publish'
+			AND (post_title LIKE %s OR post_content LIKE %s OR post_excerpt LIKE %s)",
+			$like,
+			$like,
+			$like
+		);
+		$post_matched_ids = $wpdb->get_col( $post_ids_sql );
+		$matched_ids = array_map( 'absint', (array) $post_matched_ids );
+
+		// 2. Search in postmeta table (_rj_* fields like tipe_pompa, custom fields, dll)
+		$meta_ids_sql = $wpdb->prepare(
+			"SELECT DISTINCT pm.post_id FROM {$wpdb->postmeta} pm
+			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+			WHERE p.post_type = 'rejaton_product'
+			AND p.post_status = 'publish'
+			AND pm.meta_key LIKE '_rj_%%'
+			AND pm.meta_value LIKE %s",
+			$like
+		);
+		$meta_matched_ids = $wpdb->get_col( $meta_ids_sql );
+		if ( ! empty( $meta_matched_ids ) ) {
+			$matched_ids = array_merge( $matched_ids, array_map( 'absint', $meta_matched_ids ) );
+		}
+
+		// 3. Search in rendered dynamic templates:
+		// Check products whose rendered description contains the keyword
+		$all_published_ids = $wpdb->get_col(
+			"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'rejaton_product' AND post_status = 'publish'"
+		);
+
+		if ( ! empty( $all_published_ids ) && class_exists( 'Rejaton_Catalog_Template_Renderer' ) ) {
+			foreach ( $all_published_ids as $pid ) {
+				$pid = (int) $pid;
+				if ( in_array( $pid, $matched_ids, true ) ) {
+					continue;
+				}
+
+				$rendered_desc = Rejaton_Catalog_Template_Renderer::render( $pid );
+				if ( ! empty( $rendered_desc ) ) {
+					$clean_desc = wp_strip_all_tags( $rendered_desc );
+					if ( false !== stripos( $clean_desc, $keyword ) ) {
+						$matched_ids[] = $pid;
+					}
+				}
+			}
+		}
+
+		return array_values( array_unique( $matched_ids ) );
 	}
 }

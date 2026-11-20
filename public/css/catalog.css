@@ -506,6 +506,10 @@
 }
 
 /* Detail Page */
+.rj-recommendations-section {
+	margin: 24px 0 32px 0;
+}
+
 .rj-breadcrumbs {
 	font-size: 13px;
 	color: #64748b;

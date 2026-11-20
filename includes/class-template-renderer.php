@@ -78,8 +78,8 @@ class Rejaton_Catalog_Template_Renderer {
 			$raw_val   = isset( $values[ $field_key ] ) ? $values[ $field_key ] : '';
 
 			if ( '' !== $raw_val && null !== $raw_val ) {
-				// Format numeric values
-				if ( is_numeric( $raw_val ) ) {
+				// Format numeric values (kecuali tahun agar tidak menjadi 2.026 atau 2.027)
+				if ( is_numeric( $raw_val ) && 'tahun' !== $field_key ) {
 					$display_val = rejaton_format_number_locale( $raw_val );
 				} else {
 					$display_val = esc_html( (string) $raw_val );
@@ -101,6 +101,13 @@ class Rejaton_Catalog_Template_Renderer {
 		}
 
 		// 4. Sanitize final HTML through WordPress allowed post tags
-		return wp_kses_post( $content );
+		$rendered = wp_kses_post( $content );
+
+		// 5. Allow shortcodes inside template if present (e.g. [rejaton_recommended_products])
+		if ( false !== strpos( $rendered, '[' ) && function_exists( 'do_shortcode' ) ) {
+			$rendered = do_shortcode( $rendered );
+		}
+
+		return $rendered;
 	}
 }

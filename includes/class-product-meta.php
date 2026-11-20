@@ -86,6 +86,10 @@ class Rejaton_Catalog_Product_Meta {
 		$liter_detik = rejaton_calculate_debit_liter_per_detik( $debit );
 		$values['debit_per_detik'] = ( null !== $liter_detik ) ? $liter_detik : '';
 
+		// Dynamic: Current month and year when product is accessed
+		$values['bulan'] = rejaton_get_indonesian_month_name();
+		$values['tahun'] = rejaton_get_current_year();
+
 		// Custom fields
 		$custom_defs = Rejaton_Catalog_Field_Registry::get_custom_fields();
 		foreach ( $custom_defs as $key => $def ) {

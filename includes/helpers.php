@@ -68,8 +68,53 @@ function rejaton_calculate_debit_liter_per_detik( $m3_per_jam, $decimals = 2 ) {
 }
 
 /**
+ * Get Indonesian month name (1-12)
+ *
+ * @param int|null $month_num 1 to 12. If null, current month.
+ * @return string
+ */
+function rejaton_get_indonesian_month_name( $month_num = null ) {
+	if ( null === $month_num ) {
+		if ( function_exists( 'current_datetime' ) ) {
+			$month_num = (int) current_datetime()->format( 'n' );
+		} else {
+			$month_num = (int) date_i18n( 'n' );
+		}
+	}
+
+	$months = array(
+		1  => 'Januari',
+		2  => 'Februari',
+		3  => 'Maret',
+		4  => 'April',
+		5  => 'Mei',
+		6  => 'Juni',
+		7  => 'Juli',
+		8  => 'Agustus',
+		9  => 'September',
+		10 => 'Oktober',
+		11 => 'November',
+		12 => 'Desember',
+	);
+
+	$month_num = (int) $month_num;
+	return isset( $months[ $month_num ] ) ? $months[ $month_num ] : '';
+}
+
+/**
+ * Get current year in site timezone
+ *
+ * @return string
+ */
+function rejaton_get_current_year() {
+	if ( function_exists( 'current_datetime' ) ) {
+		return current_datetime()->format( 'Y' );
+	}
+	return date_i18n( 'Y' );
+}
+
+/**
  * Format numeric value for Indonesian locale display.
- * Example: 2.5 -> 2,5 or 9.00 -> 9
  *
  * @param float|int|string $number
  * @param int $max_decimals

@@ -122,6 +122,32 @@ class Rejaton_Catalog_Field_Registry {
 				'in_spec'      => true,
 				'is_system'    => true,
 			),
+			'bulan'             => array(
+				'key'          => 'bulan',
+				'label'        => __( 'Bulan Saat Ini', 'rejaton-product-catalog' ),
+				'type'         => 'derived',
+				'unit'         => '',
+				'token'        => '[Bulan]',
+				'required'     => false,
+				'description'  => __( 'Dinamis mengikuti nama bulan saat halaman produk diakses (contoh: Januari, November).', 'rejaton-product-catalog' ),
+				'in_card'      => false,
+				'in_filter'    => false,
+				'in_spec'      => false,
+				'is_system'    => true,
+			),
+			'tahun'             => array(
+				'key'          => 'tahun',
+				'label'        => __( 'Tahun Saat Ini', 'rejaton-product-catalog' ),
+				'type'         => 'derived',
+				'unit'         => '',
+				'token'        => '[Tahun]',
+				'required'     => false,
+				'description'  => __( 'Dinamis mengikuti tahun saat halaman produk diakses (contoh: 2026, 2027).', 'rejaton-product-catalog' ),
+				'in_card'      => false,
+				'in_filter'    => false,
+				'in_spec'      => false,
+				'is_system'    => true,
+			),
 		);
 	}
 
@@ -180,6 +206,8 @@ class Rejaton_Catalog_Field_Registry {
 			'[Rentang Head]'      => array( 'key' => 'rentang_head', 'label' => 'Rentang Head', 'unit' => 'meter' ),
 			'[Daya Panel Surya]'  => array( 'key' => 'daya_panel_surya', 'label' => 'Daya Panel Surya', 'unit' => 'kWp' ),
 			'[Debit × 3,6]'       => array( 'key' => 'debit_m3_jam', 'label' => 'Debit m³/jam', 'unit' => 'm³/jam' ),
+			'[Bulan]'             => array( 'key' => 'bulan', 'label' => 'Bulan Akses', 'unit' => '' ),
+			'[Tahun]'             => array( 'key' => 'tahun', 'label' => 'Tahun Akses', 'unit' => '' ),
 		);
 
 		// Also register dynamic custom fields token if available

@@ -16,6 +16,8 @@ class Rejaton_Catalog_Post_Types {
 		// Run early on init so edit.php and post-new.php recognise the post type
 		add_action( 'init', array( $this, 'register_post_types' ), 5 );
 		// Ensure templates exist and migrate legacy template formats
+		add_action( 'init', array( 'Rejaton_Catalog_Template_Repository', 'ensure_default_template' ), 15 );
+		add_action( 'init', array( 'Rejaton_Catalog_Template_Repository', 'ensure_pdf_template' ), 16 );
 		add_action( 'init', array( 'Rejaton_Catalog_Template_Repository', 'migrate_legacy_templates' ), 20 );
 	}
 

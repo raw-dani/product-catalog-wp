@@ -127,6 +127,8 @@ class Rejaton_Catalog_Template_Editor {
 					'debit_m3_jam'     => 36,
 					'rentang_head'     => '50 meter',
 					'daya_panel_surya' => 1.8,
+					'bulan'            => rejaton_get_indonesian_month_name(),
+					'tahun'            => rejaton_get_current_year(),
 				);
 				echo Rejaton_Catalog_Template_Renderer::parse_content( $content, $sample_values, true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				?>
@@ -189,6 +191,8 @@ class Rejaton_Catalog_Template_Editor {
 				'debit_m3_jam'     => 36,
 				'rentang_head'     => '50 meter',
 				'daya_panel_surya' => 1.8,
+				'bulan'            => rejaton_get_indonesian_month_name(),
+				'tahun'            => rejaton_get_current_year(),
 			);
 			$rendered = Rejaton_Catalog_Template_Renderer::parse_content( $content, $sample_values, true );
 		}

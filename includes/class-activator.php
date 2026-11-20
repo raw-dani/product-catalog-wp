@@ -26,6 +26,7 @@ class Rejaton_Catalog_Activator {
 
 		// Seed initial default template if none exists
 		Rejaton_Catalog_Template_Repository::ensure_default_template();
+		Rejaton_Catalog_Template_Repository::ensure_pdf_template();
 
 		// Seed default settings
 		self::init_default_settings();
