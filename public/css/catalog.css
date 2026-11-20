@@ -6,7 +6,8 @@
 :root {
 	--rj-primary: #0066cc;
 	--rj-primary-dark: #004c99;
-	--rj-accent: #25d366; /* WhatsApp green */
+	--rj-accent: #25d366;
+	/* WhatsApp green */
 	--rj-accent-dark: #1eb856;
 	--rj-text: #1d2327;
 	--rj-text-muted: #646970;
@@ -241,7 +242,8 @@
 
 @supports not (aspect-ratio: 1 / 1) {
 	.rj-card-media {
-		padding-top: 100%; /* 1:1 fallback for older browsers */
+		padding-top: 100%;
+		/* 1:1 fallback for older browsers */
 	}
 }
 
@@ -507,7 +509,21 @@
 
 /* Detail Page */
 .rj-recommendations-section {
-	margin: 24px 0 32px 0;
+	margin: 24px 0 36px 0;
+	width: 100%;
+}
+
+.rj-recommendations-grid {
+	display: grid !important;
+	grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+	gap: 20px;
+	width: 100%;
+}
+
+.rj-recommendations-grid .rj-product-card {
+	margin: 0;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .rj-breadcrumbs {
@@ -726,7 +742,8 @@
 /* Responsive Breakpoints */
 @media (max-width: 991px) {
 	.rj-cols-3 {
-		grid-template-columns: repeat(2, minmax(0, 1fr)); /* Tablet: 2 Kolom */
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		/* Tablet: 2 Kolom */
 	}
 
 	.rj-detail-main {
@@ -740,6 +757,10 @@
 }
 
 @media (max-width: 768px) {
+	.rj-recommendations-grid {
+		grid-template-columns: 1fr !important;
+	}
+
 	.rj-mobile-filter-bar {
 		display: flex;
 	}
@@ -767,7 +788,8 @@
 
 	.rj-cols-3,
 	.rj-cols-2 {
-		grid-template-columns: 1fr; /* Mobile: 1 Kolom */
+		grid-template-columns: 1fr;
+		/* Mobile: 1 Kolom */
 	}
 
 	.rj-highlight-specs {

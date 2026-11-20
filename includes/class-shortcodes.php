@@ -145,7 +145,7 @@ class Rejaton_Catalog_Shortcodes {
 		ob_start();
 		?>
 		<div class="rj-recommendations-section">
-			<div class="rj-product-grid rj-cols-3">
+			<div class="rj-product-grid rj-cols-3 rj-recommendations-grid">
 				<?php
 				while ( $rec_query->have_posts() ) : $rec_query->the_post();
 					require REJATON_CATALOG_PATH . 'public/templates/parts/product-card.php';
