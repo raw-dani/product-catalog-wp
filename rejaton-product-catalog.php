@@ -3,7 +3,7 @@
  * Plugin Name:       Rejaton Product Catalog
  * Plugin URI:        https://rejaton.com/
  * Description:       Katalog produk pompa air tenaga surya mandiri tanpa ketergantungan WooCommerce, dilengkapi custom field, dynamic template engine, filter frontend, dan integrasi WhatsApp CTA.
- * Version:           1.1.4
+ * Version:           1.1.5
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            Rohmat Ali Wardani
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'REJATON_CATALOG_VERSION', '1.1.4' );
+define( 'REJATON_CATALOG_VERSION', '1.1.5' );
 define( 'REJATON_CATALOG_FILE', __FILE__ );
 define( 'REJATON_CATALOG_PATH', plugin_dir_path( __FILE__ ) );
 define( 'REJATON_CATALOG_URL', plugin_dir_url( __FILE__ ) );

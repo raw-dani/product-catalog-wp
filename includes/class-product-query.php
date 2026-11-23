@@ -222,6 +222,8 @@ class Rejaton_Catalog_Product_Query {
 	/**
 	 * Find matching product IDs across Title, Content, Excerpt, Custom Fields, and Dynamic Template Descriptions
 	 *
+	 * Supports multi-word queries (AND logic across terms) and unit-aware search (e.g. "27 kwp", "3.6 m3/jam", "1 liter/detik").
+	 *
 	 * @param string $keyword
 	 * @return array Array of matched post IDs
 	 */
@@ -233,74 +235,179 @@ class Rejaton_Catalog_Product_Query {
 			return array();
 		}
 
-		$like = '%' . $wpdb->esc_like( $keyword ) . '%';
+		// Split into individual search words/terms (min 2 chars each)
+		$terms = array_filter( array_map( 'trim', preg_split( '/\s+/', $keyword ) ), function( $term ) {
+			return '' !== $term;
+		} );
 
-		// 1. Search in posts table (post_title, post_content, post_excerpt) for rejaton_product
-		$post_ids_sql = $wpdb->prepare(
-			"SELECT ID FROM {$wpdb->posts}
-			WHERE post_type = 'rejaton_product'
-			AND post_status = 'publish'
-			AND (post_title LIKE %s OR post_content LIKE %s OR post_excerpt LIKE %s)",
-			$like,
-			$like,
-			$like
-		);
-		$post_matched_ids = $wpdb->get_col( $post_ids_sql );
-		$matched_ids = array_map( 'absint', (array) $post_matched_ids );
-
-		// 2. Search in postmeta table (_rj_* fields like tipe_pompa, custom fields, dll)
-		$meta_ids_sql = $wpdb->prepare(
-			"SELECT DISTINCT pm.post_id FROM {$wpdb->postmeta} pm
-			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-			WHERE p.post_type = 'rejaton_product'
-			AND p.post_status = 'publish'
-			AND pm.meta_key LIKE '_rj_%%'
-			AND pm.meta_value LIKE %s",
-			$like
-		);
-		$meta_matched_ids = $wpdb->get_col( $meta_ids_sql );
-		if ( ! empty( $meta_matched_ids ) ) {
-			$matched_ids = array_merge( $matched_ids, array_map( 'absint', $meta_matched_ids ) );
+		if ( empty( $terms ) ) {
+			return array();
 		}
 
-		// 3. Search in dynamic template source (if template contains keywords)
-		$template_ids_sql = $wpdb->prepare(
-			"SELECT ID FROM {$wpdb->posts}
-			WHERE post_type = 'rejaton_template'
-			AND post_status = 'publish'
-			AND post_content LIKE %s",
-			$like
-		);
-		$matching_template_ids = $wpdb->get_col( $template_ids_sql );
-		if ( ! empty( $matching_template_ids ) ) {
-			// Find products using these templates or products using default template if default matched
-			$default_template_id = (int) rejaton_get_option( 'default_template_id', 0 );
-			$escaped_tpl_ids = implode( ',', array_map( 'absint', $matching_template_ids ) );
+		// For each term, find products that match (in title, content, postmeta, or template content)
+		// Then intersect results across all terms so "27 kwp" matches products that have both "27" and "kwp"
+		// or where "27" is in postmeta and "kwp" is the unit in the field definition/template.
+		$term_matches = array();
 
-			$assigned_prod_ids = $wpdb->get_col(
-				"SELECT post_id FROM {$wpdb->postmeta}
-				WHERE meta_key = '_rj_template_id'
-				AND meta_value IN ($escaped_tpl_ids)"
+		foreach ( $terms as $term ) {
+			$like = '%' . $wpdb->esc_like( $term ) . '%';
+			$term_ids = array();
+
+			// 1. Search in posts table (post_title, post_content, post_excerpt)
+			$post_ids_sql = $wpdb->prepare(
+				"SELECT ID FROM {$wpdb->posts}
+				WHERE post_type = 'rejaton_product'
+				AND post_status = 'publish'
+				AND (post_title LIKE %s OR post_content LIKE %s OR post_excerpt LIKE %s)",
+				$like,
+				$like,
+				$like
 			);
-			if ( ! empty( $assigned_prod_ids ) ) {
-				$matched_ids = array_merge( $matched_ids, array_map( 'absint', $assigned_prod_ids ) );
+			$post_matched = $wpdb->get_col( $post_ids_sql );
+			if ( ! empty( $post_matched ) ) {
+				$term_ids = array_merge( $term_ids, array_map( 'absint', $post_matched ) );
 			}
 
-			if ( in_array( $default_template_id, array_map( 'absint', $matching_template_ids ), true ) ) {
-				// Products without custom template inherit default template
-				$default_prod_ids = $wpdb->get_col(
-					"SELECT p.ID FROM {$wpdb->posts} p
-					LEFT JOIN {$wpdb->postmeta} pm ON (p.ID = pm.post_id AND pm.meta_key = '_rj_template_id')
-					WHERE p.post_type = 'rejaton_product' AND p.post_status = 'publish'
-					AND (pm.meta_value IS NULL OR pm.meta_value = '' OR pm.meta_value = '0')"
-				);
-				if ( ! empty( $default_prod_ids ) ) {
-					$matched_ids = array_merge( $matched_ids, array_map( 'absint', $default_prod_ids ) );
+			// 2. Search in postmeta table (_rj_* fields like tipe_pompa, daya_panel_surya, debit, custom fields, dll)
+			$meta_ids_sql = $wpdb->prepare(
+				"SELECT DISTINCT pm.post_id FROM {$wpdb->postmeta} pm
+				INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+				WHERE p.post_type = 'rejaton_product'
+				AND p.post_status = 'publish'
+				AND pm.meta_key LIKE '_rj_%%'
+				AND pm.meta_value LIKE %s",
+				$like
+			);
+			$meta_matched = $wpdb->get_col( $meta_ids_sql );
+			if ( ! empty( $meta_matched ) ) {
+				$term_ids = array_merge( $term_ids, array_map( 'absint', $meta_matched ) );
+			}
+
+			// 3. Search in taxonomy terms (categories & tags)
+			$tax_ids_sql = $wpdb->prepare(
+				"SELECT DISTINCT tr.object_id FROM {$wpdb->term_relationships} tr
+				INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+				INNER JOIN {$wpdb->terms} t ON t.term_id = tt.term_id
+				INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id
+				WHERE p.post_type = 'rejaton_product' AND p.post_status = 'publish'
+				AND (t.name LIKE %s OR t.slug LIKE %s)",
+				$like,
+				$like
+			);
+			$tax_matched = $wpdb->get_col( $tax_ids_sql );
+			if ( ! empty( $tax_matched ) ) {
+				$term_ids = array_merge( $term_ids, array_map( 'absint', $tax_matched ) );
+			}
+
+			// 4. Unit / template keyword fallback:
+			// If term matches a technical unit or template word (e.g., "kwp", "liter/detik", "m³/jam", "meter", "pompa")
+			// check if the unit belongs to a registered field or template text.
+			// If so, products that have that field populated should match this term!
+			$unit_normalized = strtolower( str_replace( array( '3', ' ' ), array( '³', '' ), $term ) );
+			$matching_field_keys = array();
+
+			// Check system and custom field units
+			$all_fields = array(
+				'daya_panel_surya' => array( 'kwp', 'wp', 'kw', 'watt' ),
+				'debit'            => array( 'm³/jam', 'm3/jam', 'liter/detik', 'lps', 'l/detik', 'debit' ),
+				'head_min'         => array( 'meter', 'm', 'head' ),
+				'head_max'         => array( 'meter', 'm', 'head' ),
+				'tipe_pompa'       => array( 'lorentz', 'submersible', 'pompa' ),
+			);
+
+			foreach ( $all_fields as $fkey => $keywords ) {
+				foreach ( $keywords as $kw ) {
+					if ( false !== stripos( $term, $kw ) || false !== stripos( $kw, $term ) ) {
+						$matching_field_keys[] = $fkey;
+						break;
+					}
 				}
 			}
+
+			if ( ! empty( $matching_field_keys ) ) {
+				$escaped_fkeys = "'" . implode( "','", array_map( function( $k ) {
+					return '_rj_' . esc_sql( $k );
+				}, array_unique( $matching_field_keys ) ) ) . "'";
+
+				$field_has_val_ids = $wpdb->get_col(
+					"SELECT DISTINCT pm.post_id FROM {$wpdb->postmeta} pm
+					INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+					WHERE p.post_type = 'rejaton_product' AND p.post_status = 'publish'
+					AND pm.meta_key IN ($escaped_fkeys)
+					AND pm.meta_value IS NOT NULL AND pm.meta_value != ''"
+				);
+
+				if ( ! empty( $field_has_val_ids ) ) {
+					$term_ids = array_merge( $term_ids, array_map( 'absint', $field_has_val_ids ) );
+				}
+			}
+
+			// Also search in dynamic template content
+			$template_ids_sql = $wpdb->prepare(
+				"SELECT ID FROM {$wpdb->posts}
+				WHERE post_type IN ('rejaton_template', 'rejaton_product_template')
+				AND post_status = 'publish'
+				AND post_content LIKE %s",
+				$like
+			);
+			$matching_template_ids = $wpdb->get_col( $template_ids_sql );
+			if ( ! empty( $matching_template_ids ) ) {
+				$default_template_id = (int) rejaton_get_option( 'default_template_id', 0 );
+				$escaped_tpl_ids = implode( ',', array_map( 'absint', $matching_template_ids ) );
+
+				$assigned_prod_ids = $wpdb->get_col(
+					"SELECT post_id FROM {$wpdb->postmeta}
+					WHERE meta_key = '_rj_template_id'
+					AND meta_value IN ($escaped_tpl_ids)"
+				);
+				if ( ! empty( $assigned_prod_ids ) ) {
+					$term_ids = array_merge( $term_ids, array_map( 'absint', $assigned_prod_ids ) );
+				}
+
+				if ( in_array( $default_template_id, array_map( 'absint', $matching_template_ids ), true ) ) {
+					$default_prod_ids = $wpdb->get_col(
+						"SELECT p.ID FROM {$wpdb->posts} p
+						LEFT JOIN {$wpdb->postmeta} pm ON (p.ID = pm.post_id AND pm.meta_key = '_rj_template_id')
+						WHERE p.post_type = 'rejaton_product' AND p.post_status = 'publish'
+						AND (pm.meta_value IS NULL OR pm.meta_value = '' OR pm.meta_value = '0')"
+					);
+					if ( ! empty( $default_prod_ids ) ) {
+						$term_ids = array_merge( $term_ids, array_map( 'absint', $default_prod_ids ) );
+					}
+				}
+			}
+
+			$term_matches[] = array_unique( $term_ids );
 		}
 
-		return array_values( array_unique( $matched_ids ) );
+		if ( empty( $term_matches ) ) {
+			return array();
+		}
+
+		// Intersect results across all terms (AND logic across words)
+		$final_matched_ids = $term_matches[0];
+		for ( $i = 1; $i < count( $term_matches ); $i++ ) {
+			$final_matched_ids = array_intersect( $final_matched_ids, $term_matches[ $i ] );
+		}
+
+		// Also check full literal phrase if final matched is empty (in case phrase exists directly)
+		if ( empty( $final_matched_ids ) ) {
+			$exact_like = '%' . $wpdb->esc_like( $keyword ) . '%';
+			$exact_ids = $wpdb->get_col( $wpdb->prepare(
+				"SELECT DISTINCT p.ID FROM {$wpdb->posts} p
+				LEFT JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+				WHERE p.post_type = 'rejaton_product' AND p.post_status = 'publish'
+				AND (p.post_title LIKE %s OR p.post_content LIKE %s OR pm.meta_value LIKE %s)",
+				$exact_like,
+				$exact_like,
+				$exact_like
+			) );
+			if ( ! empty( $exact_ids ) ) {
+				$final_matched_ids = array_map( 'absint', $exact_ids );
+			}
+		}
+
+		return array_values( array_unique( array_map( 'absint', $final_matched_ids ) ) );
 	}
 
 	/**
