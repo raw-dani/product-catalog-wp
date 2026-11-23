@@ -61,7 +61,11 @@
 			formData.push({ name: 'paged', value: page });
 
 			$('#rj-loading-spinner').fadeIn(150);
-			$('#rj-search-spinner').show();
+			if ($.trim($('#rj_search_input').val()).length >= 3) {
+				$('#rj-search-spinner').show();
+			} else {
+				$('#rj-search-spinner').hide();
+			}
 			$('#rj-products-grid').css('opacity', '0.4');
 
 			$.ajax({
@@ -102,6 +106,11 @@
 		// Trigger filter on form submit
 		$(document).on('submit', '#rj-filter-form', function(e) {
 			e.preventDefault();
+			executeFilter(1);
+		});
+
+		// Trigger filter on checklist changes (checkbox category, debit, etc.)
+		$(document).on('change', '.rj-filter-checklist input[type="checkbox"]', function() {
 			executeFilter(1);
 		});
 
