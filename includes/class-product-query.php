@@ -85,41 +85,18 @@ class Rejaton_Catalog_Product_Query {
 
 		// Debit tier filter (1 s/d 10 Liter/detik)
 		// Tiap tier N memiliki rentang: N * 3.6 <= _rj_debit < (N + 1) * 3.6
+		// Gunakan query langsung ke postmeta untuk performa tinggi & reliabilitas multi-pilihan (OR).
 		if ( ! empty( $params['debit_tier'] ) ) {
-			$tier_clauses = array();
 			$tiers = is_array( $params['debit_tier'] ) ? $params['debit_tier'] : array( $params['debit_tier'] );
+			$tier_ids = self::get_product_ids_by_debit_tiers( $tiers );
 
-			foreach ( $tiers as $tier ) {
-				$tier = absint( $tier );
-				if ( $tier < 1 || $tier > 10 ) {
-					continue;
-				}
-
-				$min_m3 = round( $tier * 3.6, 2 );
-				$max_m3 = round( ( $tier + 1 ) * 3.6, 2 );
-
-				$tier_clauses[] = array(
-					'relation' => 'AND',
-					array(
-						'key'     => '_rj_debit',
-						'value'   => $min_m3,
-						'type'    => 'DECIMAL(10,2)',
-						'compare' => '>=',
-					),
-					array(
-						'key'     => '_rj_debit',
-						'value'   => $max_m3,
-						'type'    => 'DECIMAL(10,2)',
-						'compare' => '<',
-					),
-				);
-			}
-
-			if ( ! empty( $tier_clauses ) ) {
-				if ( count( $tier_clauses ) > 1 ) {
-					$tier_clauses['relation'] = 'OR';
-				}
-				$meta_query[] = $tier_clauses;
+			if ( empty( $tier_ids ) ) {
+				$args['post__in'] = array( 0 );
+			} elseif ( isset( $args['post__in'] ) ) {
+				$intersect = array_intersect( $args['post__in'], $tier_ids );
+				$args['post__in'] = ! empty( $intersect ) ? array_values( $intersect ) : array( 0 );
+			} else {
+				$args['post__in'] = $tier_ids;
 			}
 		}
 
@@ -286,29 +263,84 @@ class Rejaton_Catalog_Product_Query {
 			$matched_ids = array_merge( $matched_ids, array_map( 'absint', $meta_matched_ids ) );
 		}
 
-		// 3. Search in rendered dynamic templates:
-		// Check products whose rendered description contains the keyword
-		$all_published_ids = $wpdb->get_col(
-			"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'rejaton_product' AND post_status = 'publish'"
+		// 3. Search in dynamic template source (if template contains keywords)
+		$template_ids_sql = $wpdb->prepare(
+			"SELECT ID FROM {$wpdb->posts}
+			WHERE post_type = 'rejaton_template'
+			AND post_status = 'publish'
+			AND post_content LIKE %s",
+			$like
 		);
+		$matching_template_ids = $wpdb->get_col( $template_ids_sql );
+		if ( ! empty( $matching_template_ids ) ) {
+			// Find products using these templates or products using default template if default matched
+			$default_template_id = (int) rejaton_get_option( 'default_template_id', 0 );
+			$escaped_tpl_ids = implode( ',', array_map( 'absint', $matching_template_ids ) );
 
-		if ( ! empty( $all_published_ids ) && class_exists( 'Rejaton_Catalog_Template_Renderer' ) ) {
-			foreach ( $all_published_ids as $pid ) {
-				$pid = (int) $pid;
-				if ( in_array( $pid, $matched_ids, true ) ) {
-					continue;
-				}
+			$assigned_prod_ids = $wpdb->get_col(
+				"SELECT post_id FROM {$wpdb->postmeta}
+				WHERE meta_key = '_rj_template_id'
+				AND meta_value IN ($escaped_tpl_ids)"
+			);
+			if ( ! empty( $assigned_prod_ids ) ) {
+				$matched_ids = array_merge( $matched_ids, array_map( 'absint', $assigned_prod_ids ) );
+			}
 
-				$rendered_desc = Rejaton_Catalog_Template_Renderer::render( $pid );
-				if ( ! empty( $rendered_desc ) ) {
-					$clean_desc = wp_strip_all_tags( $rendered_desc );
-					if ( false !== stripos( $clean_desc, $keyword ) ) {
-						$matched_ids[] = $pid;
-					}
+			if ( in_array( $default_template_id, array_map( 'absint', $matching_template_ids ), true ) ) {
+				// Products without custom template inherit default template
+				$default_prod_ids = $wpdb->get_col(
+					"SELECT p.ID FROM {$wpdb->posts} p
+					LEFT JOIN {$wpdb->postmeta} pm ON (p.ID = pm.post_id AND pm.meta_key = '_rj_template_id')
+					WHERE p.post_type = 'rejaton_product' AND p.post_status = 'publish'
+					AND (pm.meta_value IS NULL OR pm.meta_value = '' OR pm.meta_value = '0')"
+				);
+				if ( ! empty( $default_prod_ids ) ) {
+					$matched_ids = array_merge( $matched_ids, array_map( 'absint', $default_prod_ids ) );
 				}
 			}
 		}
 
 		return array_values( array_unique( $matched_ids ) );
+	}
+
+	/**
+	 * Get product IDs matching one or more debit tiers (1 s/d 10 Liter/detik)
+	 *
+	 * @param array $tiers
+	 * @return array Array of post IDs
+	 */
+	public static function get_product_ids_by_debit_tiers( array $tiers ) {
+		global $wpdb;
+
+		$tier_conditions = array();
+		foreach ( $tiers as $tier ) {
+			$tier = absint( $tier );
+			if ( $tier < 1 || $tier > 10 ) {
+				continue;
+			}
+			$min_m3 = round( $tier * 3.6, 2 );
+			$max_m3 = round( ( $tier + 1 ) * 3.6, 2 );
+
+			$tier_conditions[] = $wpdb->prepare(
+				'(CAST(pm.meta_value AS DECIMAL(10,2)) >= %f AND CAST(pm.meta_value AS DECIMAL(10,2)) < %f)',
+				$min_m3,
+				$max_m3
+			);
+		}
+
+		if ( empty( $tier_conditions ) ) {
+			return array();
+		}
+
+		$where_tiers = implode( ' OR ', $tier_conditions );
+		$sql = "SELECT DISTINCT pm.post_id FROM {$wpdb->postmeta} pm
+			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+			WHERE p.post_type = 'rejaton_product'
+			AND p.post_status = 'publish'
+			AND pm.meta_key = '_rj_debit'
+			AND ($where_tiers)";
+
+		$ids = $wpdb->get_col( $sql );
+		return ! empty( $ids ) ? array_map( 'absint', $ids ) : array();
 	}
 }
