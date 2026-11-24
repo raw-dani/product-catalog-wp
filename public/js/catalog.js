@@ -83,6 +83,21 @@
 						$('#rj-result-count').text(res.data.total_found);
 						$('.rj-count-num').text(res.data.total_found);
 
+						// Update active filter badge on mobile button
+						var activeCount = 0;
+						$('#rj-filter-form input[type="checkbox"]:checked').each(function() {
+							activeCount++;
+						});
+						if ($('#rj_search_input').val() && $('#rj_search_input').val().trim() !== '') {
+							activeCount++;
+						}
+						var $badge = $('#rj-mobile-filter-badge');
+						if (activeCount > 0) {
+							$badge.text(activeCount).show();
+						} else {
+							$badge.hide();
+						}
+
 						// Close mobile drawer if open
 						$('#rj-catalog-sidebar').removeClass('rj-drawer-open');
 						$('body').css('overflow', '');

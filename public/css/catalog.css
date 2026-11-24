@@ -58,11 +58,80 @@
 	display: none;
 	align-items: center;
 	justify-content: space-between;
-	padding: 12px 16px;
-	background: #fff;
+	gap: 12px;
+	padding: 12px 14px;
+	background: #ffffff;
 	border: 1px solid var(--rj-border);
 	border-radius: var(--rj-card-radius);
-	margin-bottom: 20px;
+	margin-bottom: 16px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.rj-btn-mobile-filter {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	background: linear-gradient(135deg, #0c3260 0%, #004c99 100%);
+	color: #ffffff !important;
+	border: none;
+	padding: 11px 18px;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 0.2px;
+	box-shadow: 0 3px 8px rgba(12, 50, 96, 0.25);
+	cursor: pointer;
+	flex: 1 1 auto;
+	min-width: 0;
+	transition: all 0.2s ease;
+	text-decoration: none !important;
+}
+
+.rj-btn-mobile-filter:hover,
+.rj-btn-mobile-filter:focus {
+	background: linear-gradient(135deg, #09264a 0%, #003b77 100%);
+	box-shadow: 0 4px 12px rgba(12, 50, 96, 0.35);
+	transform: translateY(-1px);
+}
+
+.rj-btn-mobile-filter .rj-btn-icon {
+	flex-shrink: 0;
+	stroke: #ffc916;
+}
+
+.rj-btn-mobile-filter .rj-btn-text {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.rj-filter-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 20px;
+	height: 20px;
+	padding: 0 6px;
+	background: #ffc916;
+	color: #1a1a1a;
+	font-size: 11px;
+	font-weight: 800;
+	border-radius: 10px;
+	line-height: 1;
+}
+
+.rj-mobile-result-count {
+	font-size: 13px;
+	color: var(--rj-text-muted);
+	white-space: nowrap;
+	text-align: right;
+	flex-shrink: 0;
+}
+
+.rj-mobile-result-count .rj-count-num {
+	font-weight: 700;
+	color: #0c3260;
 }
 
 /* Catalog Layout */
@@ -826,6 +895,26 @@
 }
 
 @media (max-width: 768px) {
+	.rj-catalog-wrapper,
+	.rj-detail-wrapper {
+		padding: 16px 12px;
+	}
+
+	.rj-catalog-header {
+		margin-bottom: 20px;
+	}
+
+	.rj-catalog-title {
+		font-size: 1.5rem;
+		line-height: 1.3;
+		margin-bottom: 6px;
+	}
+
+	.rj-catalog-subtitle {
+		font-size: 0.92rem;
+		line-height: 1.45;
+	}
+
 	.rj-recommendations-grid {
 		grid-template-columns: 1fr !important;
 	}
@@ -838,13 +927,14 @@
 		position: fixed;
 		top: 0;
 		left: -100%;
-		width: 85%;
+		width: 88%;
 		max-width: 340px;
 		height: 100vh;
 		z-index: 99999;
 		overflow-y: auto;
-		transition: left 0.3s ease;
+		transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 		border-radius: 0;
+		box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
 	}
 
 	.rj-catalog-sidebar.rj-drawer-open {
@@ -858,6 +948,7 @@
 	.rj-cols-3,
 	.rj-cols-2 {
 		grid-template-columns: 1fr;
+		gap: 16px;
 		/* Mobile: 1 Kolom */
 	}
 
@@ -866,8 +957,90 @@
 	}
 
 	.rj-toolbar {
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		padding: 10px 14px;
+		margin-bottom: 16px;
+		gap: 8px;
+	}
+
+	.rj-toolbar-count {
+		font-size: 13.5px;
+	}
+
+	.rj-toolbar-sort {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 13px;
+	}
+
+	.rj-toolbar-sort select {
+		padding: 5px 8px;
+		font-size: 13px;
+	}
+
+	.rj-product-card {
+		margin-bottom: 0;
+	}
+
+	.rj-card-content {
+		padding: 14px 16px;
+	}
+
+	.rj-card-title {
+		font-size: 1.05rem;
+		margin-bottom: 10px;
+	}
+
+	.rj-card-specs {
+		margin-bottom: 14px;
+	}
+}
+
+/* Extra small screens (HP layar kecil <= 420px) */
+@media (max-width: 420px) {
+	.rj-catalog-wrapper,
+	.rj-detail-wrapper {
+		padding: 12px 8px;
+	}
+
+	.rj-mobile-filter-bar {
+		padding: 10px 12px;
+		gap: 8px;
+	}
+
+	.rj-btn-mobile-filter {
+		padding: 9px 12px;
+		font-size: 13px;
+		gap: 6px;
+	}
+
+	.rj-btn-mobile-filter .rj-btn-icon {
+		width: 17px;
+		height: 17px;
+	}
+
+	.rj-mobile-result-count {
+		font-size: 12px;
+	}
+
+	.rj-toolbar {
 		flex-direction: column;
-		align-items: flex-start;
+		align-items: stretch;
 		gap: 10px;
+		padding: 10px 12px;
+	}
+
+	.rj-toolbar-sort {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.rj-toolbar-sort select {
+		flex: 1;
+		max-width: 70%;
 	}
 }

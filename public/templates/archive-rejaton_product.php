@@ -46,14 +46,37 @@ $debit_tiers = array(
 		<p class="rj-catalog-subtitle"><?php esc_html_e( 'Solusi pengadaan pompa air tenaga surya resmi LORENTZ & sistem hybrid untuk irigasi, air bersih, dan proyek perpipaan.', 'rejaton-product-catalog' ); ?></p>
 	</div>
 
-	<!-- Mobile Filter Drawer Toggle Button -->
+	<!-- Mobile Filter Drawer Toggle Button & Status Bar -->
 	<div class="rj-mobile-filter-bar">
-		<button type="button" class="rj-btn rj-btn-secondary" id="rj-open-mobile-filter">
-			<span class="dashicons dashicons-filter"></span>
-			<?php esc_html_e( 'Filter & Spesifikasi', 'rejaton-product-catalog' ); ?>
+		<button type="button" class="rj-btn rj-btn-mobile-filter" id="rj-open-mobile-filter" aria-label="<?php esc_attr_e( 'Buka Filter & Spesifikasi Produk', 'rejaton-product-catalog' ); ?>">
+			<svg class="rj-btn-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<line x1="4" y1="21" x2="4" y2="14"></line>
+				<line x1="4" y1="10" x2="4" y2="3"></line>
+				<line x1="12" y1="21" x2="12" y2="12"></line>
+				<line x1="12" y1="8" x2="12" y2="3"></line>
+				<line x1="20" y1="21" x2="20" y2="16"></line>
+				<line x1="20" y1="12" x2="20" y2="3"></line>
+				<line x1="1" y1="14" x2="7" y2="14"></line>
+				<line x1="9" y1="8" x2="15" y2="8"></line>
+				<line x1="17" y1="16" x2="23" y2="16"></line>
+			</svg>
+			<span class="rj-btn-text"><?php esc_html_e( 'Filter & Spesifikasi', 'rejaton-product-catalog' ); ?></span>
+			<?php
+			$active_filter_count = 0;
+			if ( ! empty( $selected_debit ) ) {
+				$active_filter_count += count( $selected_debit );
+			}
+			if ( ! empty( $selected_cats ) ) {
+				$active_filter_count += count( $selected_cats );
+			}
+			if ( ! empty( $params['search'] ) ) {
+				$active_filter_count += 1;
+			}
+			?>
+			<span class="rj-filter-badge" id="rj-mobile-filter-badge" <?php echo ( $active_filter_count > 0 ) ? '' : 'style="display:none;"'; ?>><?php echo esc_html( $active_filter_count ); ?></span>
 		</button>
 		<div class="rj-mobile-result-count">
-			<span class="rj-count-num"><?php echo esc_html( $query->found_posts ); ?></span> <?php esc_html_e( 'produk ditemukan', 'rejaton-product-catalog' ); ?>
+			<span class="rj-count-num"><?php echo esc_html( $query->found_posts ); ?></span> <?php esc_html_e( 'produk', 'rejaton-product-catalog' ); ?>
 		</div>
 	</div>
 
